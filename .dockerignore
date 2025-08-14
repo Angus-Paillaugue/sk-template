@@ -1,0 +1,15 @@
+.svelte-kit
+node_modules
+.env
+README.md
+bun.lock
+.gitignore
+.npmrc
+.prettierignore
+.prettierrc
+docker-compose.yaml
+Dockerfile
+eslint.config.js
+tsconfig.json
+build
+pg_data

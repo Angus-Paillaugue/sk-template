@@ -1,0 +1,42 @@
+services:
+  web:
+    build: .
+    image: <DOCKER_USERNAME>/<PROJECT_NAME>:latest
+    container_name: web
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    environment:
+      - ORIGIN=http://localhost:4173
+    env_file:
+      - .env
+    ports:
+      - '4173:3000'
+
+  db:
+    image: postgres
+    container_name: db
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data:Z
+      - ./sql:/docker-entrypoint-initdb.d:Z
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

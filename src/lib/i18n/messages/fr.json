@@ -1,0 +1,79 @@
+{
+  "seo": {
+    "titleSuffix": "<PROJECT_NAME>",
+    "defaults": {
+      "title": "DEFAULT_TITLE",
+      "description": "DEFAULT_DESCRIPTION"
+    },
+    "homePage": {
+      "title": "Accueil"
+    },
+    "auth": {
+      "logIn": {
+        "title": "Se connecter"
+      },
+      "signUp": {
+        "title": "S'inscrire"
+      }
+    }
+  },
+  "errors": {
+    "auth": {
+      "badUsername": "Aucun utilisateur trouvé avec ce nom d'utilisateur",
+      "invalidCredentials": "Identifiants invalides. Veuillez réessayer.",
+      "createUser": "Échec de la création de l'utilisateur",
+      "usernameTaken": "Ce nom d'utilisateur est déjà pris",
+      "userDoesNotExist": "L'utilisateur n'existe pas.",
+      "userNotFound": "Utilisateur non trouvé",
+      "userIsRequired": "L'utilisateur est requis",
+      "unauthorized": "Unauthorized.",
+      "emailInUse": "Cet e-mail est déjà utilisé sur un autre compte.",
+      "createPasskey": "Échec de la création de la passkey",
+      "passkeyAlreadyExists": "Cette passkey existe déjà.",
+      "challengeExpired": "Le défi a expiré. Veuillez réessayer.",
+      "noPasskey": "Aucune passkey enregistrée pour cet utilisateur.",
+      "verificationFailed": "Échec de la vérification. Veuillez réessayer.",
+      "passkeyLoginFailed": "Échec de la connexion avec la passkey. Veuillez réessayer."
+    },
+    "server": {
+      "connectionRefused": "Connection refusée. Veuillez réessayer plus tard.",
+      "forbidden": "Interdit"
+    }
+  },
+  "successes": {
+    "passkeyAdded": "Passkey ajoutée avec succès.",
+    "passkeyDeleted": "Passkey supprimée avec succès."
+  },
+  "auth": {
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "email": "Email",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "submit": "Envoyer",
+    "signIn": {
+      "title": "Créez votre compte",
+      "alreadyHaveAnAccount": {
+        "text": "Vous avez déjà un compte ?",
+        "cta": "Se connecter"
+      }
+    },
+    "logIn": {
+      "title": "Se connecter",
+      "dontHaveAnAccount": {
+        "text": "Vous n'avez pas encore un compte?",
+        "cta": "S'inscrire"
+      }
+    },
+    "passkey": {
+      "separator": "ou",
+      "button": "Utiliser la Passkey"
+    }
+  },
+  "errorPage": {
+    "cta": {
+      "goHome": "Accueil",
+      "goBack": "Retour"
+    }
+  }
+}
