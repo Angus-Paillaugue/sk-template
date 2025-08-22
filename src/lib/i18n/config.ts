@@ -7,9 +7,5 @@ export const config: Config = {
       locale: 'en',
       loader: async () => (await import('./messages/en.json')).default,
     },
-    {
-      locale: 'fr',
-      loader: async () => (await import('./messages/fr.json')).default,
-    },
   ],
 };
