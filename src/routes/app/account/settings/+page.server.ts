@@ -2,9 +2,46 @@ import { PasskeyDAO } from '$lib/server/db/passkey';
 import { UserDAO } from '$lib/server/db/user';
 import { validateTOTP } from '$lib/server/totp';
 import type { User } from '$lib/types';
+import { logger } from '$lib/utils/logger';
 import { fail, type Actions } from '@sveltejs/kit';
+import bcrypt from 'bcryptjs';
+import { defs } from '$lib/utils/form';
+import z from 'zod';
 
 export const actions: Actions = {
+  changePassword: async ({ locals, request }) => {
+    const user = locals.user as User;
+
+    try {
+      const formData = Object.fromEntries(await request.formData());
+      const schema = z.object({
+        password: defs.password,
+        confirmPassword: defs.password,
+      });
+      const form = schema.safeParse(formData);
+      if (!form.success) throw new Error(form.error.issues[0].message);
+      const { password, confirmPassword } = form.data;
+
+      if (password !== confirmPassword)
+        throw new Error('errors.auth.passwordReset.passwordsDontMatch');
+
+      // Check if the password is the same as the current one
+      if (await bcrypt.compare(password, user.passwordHash))
+        throw new Error('errors.auth.passwordReset.samePassword');
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+
+      await UserDAO.resetPassword(user.email, hash);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      logger.error(msg);
+      return fail(400, { action: 'changePassword', error: true, message: msg });
+    }
+
+    return { action: 'changePassword', success: true, message: 'successes.resetPassword' };
+  },
   deletePasskey: async ({ locals }) => {
     const user = locals.user as User;
 
@@ -13,7 +50,7 @@ export const actions: Actions = {
       user.passkey = null;
       return { success: true, message: 'successes.passkeyDeleted', action: 'deletePasskey' };
     } catch (error) {
-      console.error('Error deleting passkey:', error);
+      logger.error('Error deleting passkey:', error);
       return fail(500, {
         error: true,
         message: 'errors.auth.passkeyDeletionFailed',
@@ -21,7 +58,7 @@ export const actions: Actions = {
       });
     }
   },
-  unlinkTOTP: async({ locals, request }) => {
+  unlinkTOTP: async ({ locals, request }) => {
     const user = locals.user as User;
     const formData = Object.fromEntries(await request.formData());
     const { totp } = formData as {
@@ -42,7 +79,7 @@ export const actions: Actions = {
       });
     }
   },
-  setUpTOTP: async({ locals, request }) => {
+  setUpTOTP: async ({ locals, request }) => {
     const user = locals.user as User;
     const formData = Object.fromEntries(await request.formData());
     const { totp, TOTPsecret } = formData as {

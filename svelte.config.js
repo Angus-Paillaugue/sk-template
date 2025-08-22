@@ -13,10 +13,12 @@ const config = {
     // See https://svelte.dev/docs/kit/adapters for more information about adapters.
     adapter: adapter(),
     alias: {
-      "$conf": "./config.json",
-    }
+      $conf: './config.json',
+    },
+    experimental: {
+      remoteFunctions: true,
+    },
   },
-
 };
 
 export default config;

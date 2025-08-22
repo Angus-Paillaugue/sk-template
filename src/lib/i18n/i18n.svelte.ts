@@ -1,6 +1,6 @@
-import { get, readable, writable } from 'svelte/store';
 import { config } from './config';
 import { i18nLogger } from '$lib/utils/logger';
+import { readable } from 'svelte/store';
 
 type Required<T> = {
   [P in keyof T]-?: T[P];
@@ -23,14 +23,13 @@ export interface Config {
 
 export class i18n {
   private _config: InternalConfig;
-  private _locale = writable<string>('en');
+  private _locale = $state<string>('en');
   private _currentPageTranslations = $state<Record<string, string>>({});
-  private _origin = writable<string>('');
-  private _dir = writable<Dir>('ltr');
+  private _dir = $state<Dir>('ltr');
 
   constructor(config: Config) {
     this._config = this.normalizeConfig(config);
-    this._locale.set(config.defaultLocale);
+    this._locale = config.defaultLocale;
     i18nLogger.debug(`i18n initialized with default locale "${config.defaultLocale}"`);
   }
 
@@ -60,17 +59,8 @@ export class i18n {
     return this._config.defaultLocale;
   }
 
-  get origin() {
-    return this._origin;
-  }
-
   get dir() {
     return this._dir;
-  }
-
-  setOrigin(origin: string) {
-    i18nLogger.debug(`Setting origin to "${origin}"`);
-    this._origin.set(origin);
   }
 
   setLocale(locale: string, hook?: boolean) {
@@ -80,9 +70,9 @@ export class i18n {
     i18nLogger.debug(`Setting locale to "${locale}"`);
     if (this.isLocaleSupported(locale)) {
       this.loadTranslations(locale);
-      if (locale !== get(this._locale)) {
-        this._locale.set(locale);
-        this._dir.set(config.loaders.find((l) => l.locale === locale)?.dir as Dir);
+      if (locale !== this._locale) {
+        this._locale = locale;
+        this._dir = config.loaders.find((l) => l.locale === locale)?.dir as Dir;
       }
     } else {
       i18nLogger.error(`Locale ${locale} not supported`);
@@ -125,8 +115,7 @@ export class i18n {
 
   // Load translations for the current locale in memory
   async loadTranslations(locale: string) {
-    if (locale === get(this._locale) && Object.keys(this._currentPageTranslations).length !== 0)
-      return;
+    if (locale === this._locale && Object.keys(this._currentPageTranslations).length !== 0) return;
     const loader = this._config.loaders.find((l) => l.locale === locale);
     if (loader) {
       this._currentPageTranslations = this.flattenTranslations(await loader.loader());
@@ -162,10 +151,5 @@ export class i18n {
       }
       return key;
     });
-  }
-
-  // Translate a single translation and returns a string of it's value. No reactivity (mainly used on the server to i18n error messages)
-  translate(key: string, params?: Record<string, unknown>) {
-    return get(this.t)(key, params);
   }
 }

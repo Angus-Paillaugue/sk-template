@@ -26,7 +26,7 @@ read -p "Press Enter to continue after editing these files..."
 
 # Handle Postgres .sql files
 sed -i "s/<POSTGRES_USER>/$POSTGRES_USER/g" "$PROJECT_ROOT/sql/init.sql"
-sed -i "s/<PROJECT_NAME>/$(get_config_value "project_name")/g" "$PROJECT_ROOT/sql/init.sql"
+sed -i "s/<POSTGRES_DB>/$POSTGRES_DB/g" "$PROJECT_ROOT/sql/init.sql"
 
 # Handle docker files
 docker_username=$(docker info | sed '/Username:/!d;s/.* //');

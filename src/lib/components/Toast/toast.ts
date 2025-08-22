@@ -1,9 +1,24 @@
 import { writable, type Writable } from 'svelte/store';
+import type { ButtonVariant } from '$lib/components/ui/button';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
+type ToastActionButtonVariants = ButtonVariant;
+interface ToastActionLink {
+  type: 'link';
+  href: string;
+}
+interface ToastActionButton {
+  type: 'button';
+  onClick: () => void;
+}
+export type ToastAction = { label: string; variant?: ToastActionButtonVariants } & (
+  | ToastActionLink
+  | ToastActionButton
+);
 interface ToastOptions {
   id?: string;
   timeout?: number;
+  actions?: ToastAction[];
 }
 
 export interface Toast {
@@ -20,8 +35,9 @@ function newToast(type: ToastType, message: string, options: ToastOptions): stri
   if (options.id) {
     removeToast(options.id);
   }
-  const defaultOptions = {
+  const defaultOptions: ToastOptions = {
     timeout: 5000, // Default timeout of 5 seconds
+    actions: [],
   };
   const newToast: Toast = {
     type: type,

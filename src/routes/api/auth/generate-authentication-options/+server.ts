@@ -11,7 +11,10 @@ export const GET: RequestHandler = async () => {
     rpID: rpID,
     userVerification: 'preferred',
   });
-  await Redis.set(`authenticationChallenge:${UUID}`, opts.challenge, { condition: undefined, ttl: 10 });
+  await Redis.set(`authenticationChallenge:${UUID}`, opts.challenge, {
+    condition: undefined,
+    ttl: 10,
+  });
 
   return json({ opts, UUID });
 };

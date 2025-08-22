@@ -9,7 +9,6 @@ import { generateAccessToken } from '$lib/server/auth';
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { authResp, UUID } = await request.json();
 
-
   const storedChallenge = await Redis.get<string>(`authenticationChallenge:${UUID}`);
   if (!storedChallenge) {
     return json({ error: 'errors.auth.challengeExpired' }, { status: 400 });
@@ -20,13 +19,12 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     throw new Error('No authenticator found for this credential ID');
   }
 
-
   const verification = await verifyAuthenticationResponse({
     response: authResp,
     expectedChallenge: storedChallenge,
     expectedOrigin: origin,
     expectedRPID: rpID,
-    credential: passkey ,
+    credential: passkey,
   });
 
   if (verification.verified) {

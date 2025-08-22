@@ -3,8 +3,11 @@ import chalk from 'chalk';
 
 const loggerLevels = ['error', 'warn', 'debug'] as const;
 
-const createLogger = (prefix: string | null, color: string | null) => {
-  const defaultColors: Record<(typeof loggerLevels)[number], string> = {
+type LoggerLevel = (typeof loggerLevels)[number];
+type Logger = { [K in LoggerLevel]: (...args: unknown[]) => void };
+
+const createLogger = (prefix: string | null, color: string | null): Logger => {
+  const defaultColors: Record<LoggerLevel, string> = {
     error: '#dc2626',
     warn: '#ca8a04',
     debug: '#2563eb',
@@ -24,7 +27,7 @@ const createLogger = (prefix: string | null, color: string | null) => {
         },
       ];
     })
-  );
+  ) as Logger;
 };
 
 export const logger = createLogger(null, null);

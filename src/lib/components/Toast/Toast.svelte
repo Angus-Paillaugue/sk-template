@@ -6,7 +6,8 @@
   import { onMount } from 'svelte';
   import type { ToastType } from './toast';
   import { Toaster, type Toast } from './toast';
-  import { t as translate } from "$lib/i18n"
+  import { t as translate } from '$lib/i18n';
+  import { Button } from '$lib/components/ui/button';
 
   interface Props {
     toast: Toast;
@@ -51,24 +52,57 @@
     </div>
   {/if}
 
-  <div class="item-start flex flex-row gap-2">
-    <div class="size-6 shrink-0 p-1">
-      <!-- svelte-ignore svelte_component_deprecated -->
-      <svelte:component this={svgs[t.type].component} class={cn('size-full', svgs[t.type].color)} />
+  <div class="flex flex-col gap-2">
+    <div class="item-start flex flex-row gap-2">
+      <div class="size-6 shrink-0 p-1">
+        <!-- svelte-ignore svelte_component_deprecated -->
+        <svelte:component
+          this={svgs[t.type].component}
+          class={cn('size-full', svgs[t.type].color)}
+        />
+      </div>
+
+      <!-- Message -->
+      <p class="font-base mt-0.5 grow text-sm text-wrap">
+        {$translate(t.message)}
+      </p>
+
+      <!-- Close button -->
+      <button
+        class="size-6 shrink-0 p-1"
+        aria-label="Remove toast"
+        onclick={() => Toaster.remove(t.id)}
+      >
+        <X class="size-full" />
+      </button>
     </div>
 
-    <!-- Message -->
-    <p class="font-base mt-0.5 grow text-sm text-wrap">
-      {$translate(t.message)}
-    </p>
-
-    <!-- Close button -->
-    <button
-      class="size-6 shrink-0 p-1"
-      aria-label="Remove toast"
-      onclick={() => Toaster.remove(t.id)}
-    >
-      <X class="size-full" />
-    </button>
+    <!-- Actions -->
+    {#if t.options.actions && t.options.actions.length > 0}
+      <div class="flex flex-row gap-2">
+        {#each t.options.actions as action}
+          {#if action.type === 'link'}
+            <Button
+              href={action.href}
+              variant={action.variant || 'default'}
+              onclick={() => Toaster.remove(t.id)}
+            >
+              {$translate(action.label)}
+            </Button>
+          {:else if action.type === 'button'}
+            <Button
+              class="text-primary hover:underline"
+              variant={action.variant || 'default'}
+              onclick={() => {
+                action.onClick();
+                Toaster.remove(t.id);
+              }}
+            >
+              {$translate(action.label)}
+            </Button>
+          {/if}
+        {/each}
+      </div>
+    {/if}
   </div>
 </div>

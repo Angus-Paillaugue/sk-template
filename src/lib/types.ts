@@ -1,4 +1,4 @@
-import type { AuthenticatorTransportFuture, CredentialDeviceType } from "@simplewebauthn/browser";
+import type { AuthenticatorTransportFuture, CredentialDeviceType } from '@simplewebauthn/browser';
 
 export type UUID = string;
 export interface User {

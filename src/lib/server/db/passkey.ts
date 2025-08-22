@@ -1,12 +1,16 @@
 import type { Passkey, User, UUID } from '$lib/types';
-import type { AuthenticatorTransportFuture, CredentialDeviceType, WebAuthnCredential } from '@simplewebauthn/browser';
+import type {
+  AuthenticatorTransportFuture,
+  CredentialDeviceType,
+  WebAuthnCredential,
+} from '@simplewebauthn/browser';
 import pool from '.';
 import { Redis } from './caching';
 import { UserDAO } from './user';
 import { dev } from '$app/environment';
 import config from '$conf';
 
-export const rpName = dev ? 'localhost:5173' : config.website.name;
+export const rpName = config.website.name;
 export const rpID = dev ? 'localhost:5173' : config.origin;
 export const origin = `${dev ? 'http' : 'https'}://${rpID}`;
 
@@ -30,7 +34,9 @@ export class PasskeyDAO {
       counter: parseInt(row.counter, 10),
       deviceType: row.device_type as CredentialDeviceType,
       backedUp: row.backed_up,
-      transports: row.transport ? (JSON.parse(row.transport) as AuthenticatorTransportFuture[]) : undefined,
+      transports: row.transport
+        ? (JSON.parse(row.transport) as AuthenticatorTransportFuture[])
+        : undefined,
     };
   }
 
@@ -38,7 +44,9 @@ export class PasskeyDAO {
     // const cachedPasskey = await Redis.get<Passkey[]>(`user:${userId}:passkey`);
     // if (cachedPasskey) return cachedPasskey;
 
-    const result = await pool.query<PasskeyTable>('SELECT * FROM passkey WHERE user_id = $1', [userId]);
+    const result = await pool.query<PasskeyTable>('SELECT * FROM passkey WHERE user_id = $1', [
+      userId,
+    ]);
     if (result.rows.length === 0) {
       return null;
     }
@@ -87,26 +95,18 @@ export class PasskeyDAO {
     return passkey;
   }
 
-  static async getPasskeyByCredentialID(
-    credentialID: Passkey['id'],
-  ): Promise<Passkey | null> {
-    const result = await pool.query<PasskeyTable>(
-      'SELECT * FROM passkey WHERE webauthn_id = $1',
-      [credentialID],
-    );
+  static async getPasskeyByCredentialID(credentialID: Passkey['id']): Promise<Passkey | null> {
+    const result = await pool.query<PasskeyTable>('SELECT * FROM passkey WHERE webauthn_id = $1', [
+      credentialID,
+    ]);
     if (result.rows.length === 0) {
       return null;
     }
     return PasskeyDAO.convertToPasskey(result.rows[0]);
   }
 
-  static async deletePasskey(
-    userId: User['id']
-  ): Promise<void> {
-    const result = await pool.query(
-      'DELETE FROM passkey WHERE user_id = $1 RETURNING *',
-      [userId]
-    );
+  static async deletePasskey(userId: User['id']): Promise<void> {
+    const result = await pool.query('DELETE FROM passkey WHERE user_id = $1 RETURNING *', [userId]);
     if (result.rowCount === 0) {
       throw new Error('errors.auth.deletePasskey');
     }
@@ -114,12 +114,10 @@ export class PasskeyDAO {
     await Redis.del(`user:${userId}`); // Invalidate cache
   }
 
-  static async getUserByCredentialID(
-    credentialID: Passkey['id'],
-  ): Promise<User | null> {
+  static async getUserByCredentialID(credentialID: Passkey['id']): Promise<User | null> {
     const result = await pool.query<PasskeyTable>(
       'SELECT user_id FROM passkey WHERE webauthn_id = $1',
-      [credentialID],
+      [credentialID]
     );
     if (result.rows.length === 0) {
       return null;

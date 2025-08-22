@@ -47,6 +47,6 @@ export function portal(el: HTMLElement, target?: HTMLElement | string) {
   update(target);
   return {
     update,
-    destroy
+    destroy,
   };
 }

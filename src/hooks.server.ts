@@ -1,7 +1,7 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { defaultLocale, config as i18nConfig, locales, origin } from '$lib/i18n';
-import { urlStartsWith } from '$lib/utils';
+import { defaultLocale, config as i18nConfig, locales } from '$lib/i18n';
+import { urlStartsWith } from '$lib/utils/';
 import { auth } from '$lib/server/auth';
 import { logger } from '$lib/utils/logger';
 
@@ -47,9 +47,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
 };
 
 export const i18nHandler: Handle = async ({ event, resolve }) => {
-  const { url, request, cookies } = event;
-
-  origin.set(url.origin);
+  const { request, cookies } = event;
 
   let locale = cookies.get('locale');
 

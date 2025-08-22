@@ -12,11 +12,15 @@ export const GET: RequestHandler = async ({ url }) => {
     return new Response('errors.auth.userNotFound', { status: 404 });
   }
 
-  const excludeCredentials = user.passkey ? [{
-    id: user.passkey.id,
-    // Optional: specify transports if known
-    transports: user.passkey.transports,
-  }] : undefined;
+  const excludeCredentials = user.passkey
+    ? [
+        {
+          id: user.passkey.id,
+          // Optional: specify transports if known
+          transports: user.passkey.transports,
+        },
+      ]
+    : undefined;
 
   const options = await generateRegistrationOptions({
     rpName,

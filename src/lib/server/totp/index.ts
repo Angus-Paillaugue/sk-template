@@ -1,8 +1,8 @@
-import { logger } from "$lib/utils/logger";
-import config from "$conf"
-import type { User } from "$lib/types";
-import speakeasy from "speakeasy";
-import { UserDAO } from "$lib/server/db/user";
+import { logger } from '$lib/utils/logger';
+import config from '$conf';
+import type { User } from '$lib/types';
+import speakeasy from 'speakeasy';
+import { UserDAO } from '$lib/server/db/user';
 
 export const validateTOTP = async (secret: string, token: string) => {
   const verified = speakeasy.totp.verify({

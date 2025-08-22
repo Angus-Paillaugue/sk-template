@@ -1,6 +1,7 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { PageProps } from './$types';
-  let { data, form }: PageProps = $props();
+  let { data }: PageProps = $props();
   let { user } = data;
-</script>
+</script> -->
+
 <a href="/app/account/settings">Settings</a>

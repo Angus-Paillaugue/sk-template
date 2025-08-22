@@ -10,13 +10,9 @@ export const locale = i18nInstance.locale;
 export const locales = i18nInstance.locales;
 export const translations = i18nInstance.translations;
 export const defaultLocale = i18nInstance.defaultLocale;
-export const origin = i18nInstance.origin;
 export const dir = i18nInstance.dir;
 export const config = i18nInstance.config;
 
 // These functions need to be wrapped to maintain the correct 'this' binding
 export const loadTranslations = (locale: string) => i18nInstance.loadTranslations(locale);
 export const setLocale = (locale: string, hook?: boolean) => i18nInstance.setLocale(locale, hook);
-export const setOrigin = (origin: string) => i18nInstance.setOrigin(origin);
-export const translate = (key: string, params?: Record<string, unknown>) =>
-  i18nInstance.translate(key, params);

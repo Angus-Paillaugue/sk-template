@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { Button, Checkbox, Input, Modal, SEO } from '$lib/components';
+  import { SEO } from '$lib/components';
+  import { Button } from '$lib/components/ui/button';
   import { Toaster } from '$lib/components/Toast/toast';
   import { t } from '$lib/i18n';
   import { logger } from '$lib/utils/logger';
@@ -8,6 +8,12 @@
   import { startAuthentication } from '@simplewebauthn/browser';
   import type { PageProps } from './$types';
   import { ArrowRight, KeyRound } from 'lucide-svelte';
+  import { Input } from '$lib/components/ui/input';
+  import { Label } from '$lib/components/ui/label';
+  import { enhance } from '$app/forms';
+  import { Checkbox } from '$lib/components/ui/checkbox';
+  import * as Dialog from '$lib/components/ui/dialog';
+  import { InputOTP } from '$lib/components/ui/input-otp';
 
   let { form }: PageProps = $props();
   let loading = $state(false);
@@ -17,12 +23,14 @@
 
   $effect(() => {
     if (form?.error && form?.action === 'logIn') {
-      if(form?.noTOTPCode) {
+      if (form?.noTOTPCode) {
         totpModalOpen = true;
         return;
       }
-      logger.error('Log in error:', $t(form.message));
-      Toaster.error(form.message);
+      if (form?.message) {
+        logger.error('Log in error:', form.message);
+        Toaster.error(form.message);
+      }
     }
   });
 
@@ -37,10 +45,9 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ authResp, UUID }),
-      })
+      });
       const verification = await verificationRes.json();
-      if(!verificationRes.ok) {
-        console.log(verification)
+      if (!verificationRes.ok) {
         throw new Error(verification.error || 'errors.auth.verificationFailed');
       }
 
@@ -48,9 +55,9 @@
         window.location.href = '/app';
       }
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logger.error(errorMessage);
-        Toaster.error(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logger.error(errorMessage);
+      Toaster.error(errorMessage);
     } finally {
       passkeyLoading = false;
     }
@@ -59,20 +66,19 @@
 
 <SEO title={$t('seo.auth.logIn.title')} />
 
-<!-- Set up/Unlink 2FA -->
-<Modal bind:open={totpModalOpen} noBackdropClose={true}>
-  <Modal.Heading>
-    <Modal.Title>{$t('auth.totp.logIn.title')}</Modal.Title>
-    <Modal.Description>{$t('auth.totp.logIn.description')}</Modal.Description>
-  </Modal.Heading>
-
+<Dialog.Root bind:open={totpModalOpen}>
+  <Dialog.Content>
+    <Dialog.Header>
+      <Dialog.Title>{$t('auth.totp.logIn.title')}</Dialog.Title>
+      <Dialog.Description>{$t('auth.totp.logIn.description')}</Dialog.Description>
+    </Dialog.Header>
 
     <form
       action="?/logIn"
       class="mt-6 flex flex-col gap-4"
       method="POST"
       use:enhance={(e) => {
-        for(const [key, value] of formData.entries()) {
+        for (const [key, value] of formData.entries()) {
           e.formData.append(key, value);
         }
         loading = true;
@@ -82,54 +88,60 @@
         };
       }}
     >
-      <Input.TOTP name="totpCode" class={{ container: 'mx-auto w-fit' }} />
-      <Modal.Actions>
-        <Button loading={loading}>
+      <InputOTP name="totp" class={{ container: 'mx-auto w-fit' }} />
+      <Dialog.Footer>
+        <Button {loading}>
           {$t('auth.totp.logIn.nextButton')}
           <ArrowRight class="size-4" />
         </Button>
-      </Modal.Actions>
+      </Dialog.Footer>
     </form>
-</Modal>
+  </Dialog.Content>
+</Dialog.Root>
 
 <FormWrapper>
   <div class="flex w-full flex-col space-y-8">
     <form
       action="?/logIn"
       method="POST"
-      class="flex w-full flex-col space-y-8"
       use:enhance={(e) => {
         loading = true;
         formData = e.formData;
         return async ({ update }) => {
-          await update();
+          await update({ reset: false });
           loading = false;
         };
       }}
+      class="flex w-full flex-col space-y-8"
     >
       <img src="/logo.png" class="size-8 object-contain" alt="" />
       <h1 class="mb-2 text-2xl font-semibold">{$t('auth.logIn.title')}</h1>
-      <p class="text-muted text-base">
+      <p class="text-muted-foreground text-base">
         {$t('auth.logIn.dontHaveAnAccount.text')}
         <a href="/auth/sign-up" class="text-primary font-medium"
           >{$t('auth.logIn.dontHaveAnAccount.cta')}</a
         >
       </p>
-      <Input name="username" placeholder={$t('auth.username')} />
-      <Input name="password" type="password" placeholder={$t('auth.password')} />
+      <div class="space-y-2">
+        <Label for="username">{$t('auth.username')}</Label>
+        <Input name="username" />
+      </div>
+      <div class="space-y-2">
+        <Label>{$t('auth.password')}</Label>
+        <Input name="password" type="password" />
+      </div>
       <div class="flex flex-row items-center justify-between">
         <div class="flex flex-row items-center gap-1">
-          <Checkbox name="rememberMe" id="rememberMe" checked={true} />
-          <label for="rememberMe" class="text-muted text-sm">{$t('auth.rememberMe')}</label>
+          <Checkbox id="rememberMe" name="rememberMe" checked />
+          <Label for="rememberMe">{$t('auth.rememberMe')}</Label>
         </div>
         <a href="/auth/forgot-password" class="text-primary text-sm font-medium"
-          >{$t('auth.forgotPassword')}</a
+          >{$t('auth.forgotPasswordKeyword')}</a
         >
       </div>
       <Button type="submit" {loading}>{$t('auth.submit')}</Button>
     </form>
 
-    <!-- Hr -->
     <div class="flex flex-row items-center gap-2">
       <div class="border-border w-full border-t"></div>
       <span class="font-mono text-base font-semibold uppercase">{$t('auth.passkey.separator')}</span

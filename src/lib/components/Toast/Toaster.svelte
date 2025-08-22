@@ -5,7 +5,7 @@
 </script>
 
 <div
-  class='fixed bottom-4 z-40 flex flex-col gap-2 transition-all max-md:left-4 right-4 md:w-[400px]'
+  class="fixed right-4 bottom-4 z-[60] flex flex-col gap-2 transition-all max-md:left-4 md:w-[400px]"
 >
   {#each $toasts as toast (toast.id)}
     <div animate:flip={{ duration: 300 }}>

@@ -26,20 +26,32 @@
       "userDoesNotExist": "User does not exist.",
       "userNotFound": "User not found.",
       "userIsRequired": "User is required.",
+      "usernameTooShort": "Username must be at least 3 characters long.",
+      "usernameTooLong": "Username must be at most 20 characters long.",
       "unauthorized": "Unauthorized.",
       "emailInUse": "This email is already in use in an active account.",
+      "invalidEmail": "Invalid email address.",
       "createPasskey": "Failed to create passkey",
       "passkeyAlreadyExists": "This passkey already exists.",
       "challengeExpired": "The challenge has expired. Please try again.",
       "noPasskey": "No passkey registered for this user.",
       "verificationFailed": "Verification failed. Please try again.",
       "passkeyLoginFailed": "Passkey login failed. Please try again.",
+      "passwordTooShort": "Password must be at least 8 characters long.",
+      "passwordTooLong": "Password must be at most 100 characters long.",
       "totp": {
         "invalidToken": "Invalid TOTP token.",
         "registerFailed": "Failed to register TOTP. Please try again.",
         "invalidCode": "Invalid TOTP code",
         "notEnabled": "You must enable TOTP to perform this action.",
         "needTOTP": "You need to provide a TOTP code to perform this action."
+      },
+      "passwordReset": {
+        "noToken": "No reset token is provided!",
+        "expiredToken": "The request expired!",
+        "passwordsDontMatch": "Passwords does not match!",
+        "noAccountWithEmail": "No account associated with this e-mail!",
+        "samePassword": "Wrong current password!"
       }
     },
     "server": {
@@ -51,14 +63,17 @@
     "passkeyAdded": "Passkey added successfully.",
     "passkeyDeleted": "Passkey deleted successfully.",
     "setUpTOTP": "TOTP has been set up successfully.",
-    "unlinkTOTP": "TOTP has been unlinked successfully."
+    "unlinkTOTP": "TOTP has been unlinked successfully.",
+    "resetPasswordRequest": "Go check your inbox to reset your password!",
+    "resetPassword": "Your password has been reset successfully!"
   },
   "auth": {
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm password",
     "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?",
+    "forgotPasswordKeyword": "Forgot password?",
     "submit": "Submit",
     "signIn": {
       "title": "Sign in to your account",
@@ -76,23 +91,7 @@
     },
     "passkey": {
       "separator": "or",
-      "button": "Use Passkey",
-      "settings": {
-        "register": {
-          "title": "Associate a Passkey with your account. Doing so will allow you to log in with a single click, while adding an extra layer of security.",
-          "button": "Register Passkey"
-        },
-        "remove": {
-          "title": "Your account has a passkey associated with it. It is used to log in to your account in one click while adding an extra layer of security.",
-          "button": "Remove Passkey",
-          "modal": {
-            "confirm": "Remove",
-            "title": "Remove Passkey",
-            "description": "Are you sure you want to remove this passkey? This action cannot be undone.",
-            "cancel": "Cancel"
-          }
-        }
-      }
+      "button": "Use Passkey"
     },
     "totp": {
       "logIn": {
@@ -140,6 +139,18 @@
           }
         }
       }
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "button": "Send reset link"
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "button": "Reset password",
+      "successAction": "Log in"
+    },
+    "formWrapper": {
+      "back": "Back"
     }
   },
   "errorPage": {
@@ -147,5 +158,45 @@
       "goHome": "Go Home",
       "goBack": "Go Back"
     }
+  },
+  "account": {
+    "settings": {
+      "tabs": {
+        "password": {
+          "title": "Password",
+          "description": "Change your password to keep your account secure."
+        },
+        "TOTP": {
+          "title": "TOTP",
+          "description": "Two-Factor Authentication (2FA) adds an extra layer of security to your account by requiring a second form of verification when logging in."
+        },
+        "passkey": {
+          "title": "Passkey",
+          "description": "A passkey is a secure way to log in to your account without a password. It uses cryptographic keys stored on your device.",
+          "register": {
+            "button": "Register Passkey"
+          },
+          "remove": {
+            "button": "Remove Passkey",
+            "modal": {
+              "confirm": "Remove",
+              "title": "Remove Passkey",
+              "description": "Are you sure you want to remove this passkey? This action cannot be undone.",
+              "cancel": "Cancel"
+            }
+          }
+        }
+      }
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "pricing": "Pricing",
+    "app": "App",
+    "account": "Account",
+    "settings": "Settings",
+    "logIn": "Login",
+    "signUp": "Sign Up"
   }
 }

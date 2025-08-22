@@ -9,7 +9,6 @@ export interface UserTable {
   email: string;
   password_hash: string;
   created_at: Date;
-  totp_enabled: boolean;
   totp_secret: string;
 }
 export class UserDAO {
@@ -44,15 +43,22 @@ export class UserDAO {
   }
 
   static async userExists(username: User['username']): Promise<boolean> {
-    // const cachedValue = await Redis.get<boolean>(`userExists:${username}`);
-    // if (cachedValue) return cachedValue;
+    const cachedValue = await Redis.get<boolean>(`userExists:${username}`);
+    if (cachedValue) return cachedValue;
     const result = await pool.query('SELECT 1 FROM users WHERE username = $1', [username]);
     return result.rows.length > 0;
   }
 
+  static async isEmailTaken(email: User['email']) {
+    const cachedValue = await Redis.get<boolean>(`emailTaken:${email}`);
+    if (cachedValue) return cachedValue;
+    const result = await pool.query('SELECT 1 FROM users WHERE email = $1', [email]);
+    return result.rows.length > 0;
+  }
+
   static async getUserById(id: User['id']): Promise<User> {
-    // const cachedUser = await Redis.get<User>(`user:${id}`);
-    // if (cachedUser) return cachedUser;
+    const cachedUser = await Redis.get<User>(`user:${id}`);
+    if (cachedUser) return cachedUser;
 
     const userResult = await pool.query<UserTable>('SELECT * FROM users WHERE id = $1', [id]);
     if (userResult.rows.length === 0) {
@@ -67,8 +73,8 @@ export class UserDAO {
   }
 
   static async getUserByUsername(username: User['username']): Promise<User> {
-    // const cachedUser = await Redis.get<User>(`user:${username}`);
-    // if (cachedUser) return cachedUser;
+    const cachedUser = await Redis.get<User>(`user:${username}`);
+    if (cachedUser) return cachedUser;
 
     const userResult = await pool.query<UserTable>('SELECT * FROM users WHERE username = $1', [
       username,
@@ -100,10 +106,10 @@ export class UserDAO {
   }
 
   static async setTOTPSecret(userId: User['id'], secret: string): Promise<void> {
-    const result = await pool.query(
-      'UPDATE users SET totp_secret = $1, totp_enabled = true WHERE id = $2',
-      [secret, userId]
-    );
+    const result = await pool.query('UPDATE users SET totp_secret = $1 WHERE id = $2', [
+      secret,
+      userId,
+    ]);
     if (result.rowCount === 0) {
       throw new Error('errors.auth.setTOTPSecret');
     }
@@ -111,13 +117,23 @@ export class UserDAO {
   }
 
   static async unlinkTOTP(userId: User['id']): Promise<void> {
-    const result = await pool.query(
-      'UPDATE users SET totp_secret = NULL WHERE id = $1',
-      [userId]
-    );
+    const result = await pool.query('UPDATE users SET totp_secret = NULL WHERE id = $1', [userId]);
     if (result.rowCount === 0) {
       throw new Error('errors.auth.unlinkTOTP');
     }
     await Redis.del(`user:${userId}`);
+  }
+
+  static async requestPasswordReset(email: User['email']): Promise<string> {
+    const exists = await UserDAO.isEmailTaken(email);
+    if (!exists) throw new Error('errors.auth.passwordReset.noAccountWithEmail');
+    const id = crypto.randomUUID();
+    await Redis.set(`passwordReset:${id}`, email, { ttl: 60 * 5 }); // 5 min expiry
+
+    return id;
+  }
+
+  static async resetPassword(email: User['email'], hash: string) {
+    await pool.query('UPDATE users SET password_hash = $1 WHERE email = $2', [hash, email]);
   }
 }

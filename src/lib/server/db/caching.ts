@@ -32,7 +32,7 @@ export class Redis {
   static async set(
     key: string,
     value: unknown,
-    { ttl = 3600, condition = 'NX' }: { ttl?: number; condition?: 'NX' | 'XX'; } = {}
+    { ttl = 3600, condition = 'NX' }: { ttl?: number; condition?: 'NX' | 'XX' } = {}
   ) {
     if (!this.enabled) {
       return;

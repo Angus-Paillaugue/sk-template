@@ -28,7 +28,10 @@ export const POST: RequestHandler = async ({ request }) => {
   });
 
   if (verification.verified && verification.registrationInfo) {
-    const passkey = await PasskeyDAO.createPasskey(user.id, verification.registrationInfo.credential);
+    const passkey = await PasskeyDAO.createPasskey(
+      user.id,
+      verification.registrationInfo.credential
+    );
     await Redis.del(`registrationChallenge:${user.id}`);
     await Redis.del(`user:${user.id}`);
     return json({ verified: true, passkey });

@@ -5,27 +5,28 @@ import { generateAccessToken } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import { logger } from '$lib/utils/logger';
 import { validateTOTP } from '$lib/server/totp';
+import { defs } from '$lib/utils/form';
+import z from 'zod';
 
 export const actions: Actions = {
   logIn: async ({ request, cookies }) => {
-    const formData = Object.fromEntries(await request.formData()) as Record<
-      string,
-      string | undefined
-    >;
-    const { username, password, totpCode } = formData as {
-      username: string;
-      password: string;
-      totpCode: string | undefined;
-    };
-    const rememberMe = formData.rememberMe === 'on';
-
     try {
+      const formData = Object.fromEntries(await request.formData());
+      const schema = z.object({
+        username: defs.username,
+        password: defs.password,
+        rememberMe: defs.checkbox,
+        totp: z.string().optional(),
+      });
+      const form = schema.safeParse(formData);
+      if (!form.success) throw new Error(form.error.issues[0].message);
+
+      const { username, password, rememberMe, totp: totpCode } = form.data;
+
       const user = await UserDAO.getUserByUsername(username);
       const compare = await bcrypt.compare(password, user.passwordHash);
 
-      if (!compare) {
-        throw new Error('errors.auth.invalidCredentials');
-      }
+      if (!compare) throw new Error('errors.auth.invalidCredentials');
 
       if (user.totpSecret) {
         if (!totpCode) {
@@ -47,16 +48,14 @@ export const actions: Actions = {
         maxAge: rememberMe ? 60 * 60 * 24 * 30 : undefined, // 30 days if rememberMe is true
       });
     } catch (error) {
-      logger.error('Error logging user :', error);
+      const msg = error instanceof Error ? error.message : String(error);
+      logger.error('Error creating user account :', msg);
       return fail(400, {
         action: 'logIn',
         error: true,
-        message:
-          error instanceof Error
-            ? (error.message || 'errors.server.connectionRefused')
-            : String(error),
+        message: msg || 'errors.server.connectionRefused',
       });
     }
     redirect(303, '/app');
-  }
+  },
 };
