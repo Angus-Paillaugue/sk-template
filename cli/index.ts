@@ -55,10 +55,10 @@ async function bootstrap({ projectName, websiteName, websiteOrigin }: Questions)
   await rename(path.join(projectPath, '.env.example'), path.join(projectPath, '.env'));
   // replace in .env
   await replaceInFile(path.join(projectPath, '.env'), [
-    { from: /POSTGRES_USER=.*/g, to: `POSTGRES_USER=${POSTGRES_USER}` },
-    { from: /POSTGRES_PASSWORD=.*/g, to: `POSTGRES_PASSWORD=${POSTGRES_PASSWORD}` },
-    { from: /POSTGRES_DB=.*/g, to: `POSTGRES_DB=${projectName}` },
-    { from: /JWT_SECRET=.*/g, to: `JWT_SECRET=${randomString(50)}` },
+    { from: /POSTGRES_USER=.*/g, to: `POSTGRES_USER="${POSTGRES_USER}"` },
+    { from: /POSTGRES_PASSWORD=.*/g, to: `POSTGRES_PASSWORD="${POSTGRES_PASSWORD}"` },
+    { from: /POSTGRES_DB=.*/g, to: `POSTGRES_DB="${projectName}"` },
+    { from: /JWT_SECRET=.*/g, to: `JWT_SECRET="${randomString(50)}"` },
   ]);
 
   // Replace in package.json
@@ -70,8 +70,8 @@ async function bootstrap({ projectName, websiteName, websiteOrigin }: Questions)
 
   // Replace in sql/init.sql
   await replaceInFile(path.join(projectPath, 'sql', 'init.sql'), [
-    { from: /<POSTGRES_DB>/g, to: projectName },
-    { from: /<POSTGRES_USER>/g, to: POSTGRES_USER },
+    { from: /<POSTGRES_DB>/g, to: `"${projectName}` },
+    { from: /<POSTGRES_USER>/g, to: `"${POSTGRES_USER}"` },
   ]);
 
   // Replace in config.json

@@ -162,7 +162,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
     scrollbar-gutter: stable;
     overscroll-behavior: none;
     @apply bg-background text-foreground font-sans;

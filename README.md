@@ -1,107 +1,133 @@
 # Svelte 5 Template — Fullstack Auth & I18n
 
-This is a modern Svelte 5 template featuring Tailwind CSS, PostgreSQL, and robust authentication (username/password, TOTP, passkey). It includes a manual i18n implementation, database migration tooling, and a set of pre-styled UI components.
+This is a modern Svelte 5 template featuring Tailwind CSS, PostgreSQL, and robust authentication (username/password, TOTP, passkey). It includes a manual i18n implementation, database migration tooling, and a comprehensive set of pre-styled UI components based on shadcn-svelte.
 
 ## Features
 
-- **Svelte 5**: Latest Svelte framework for reactive, fast UI.
-- **Tailwind CSS**: Utility-first CSS for rapid styling.
-- **PostgreSQL**: Relational database for user and session data.
-- **Authentication**:
-  - Username & password
-  - TOTP (Time-based One-Time Password, 2FA)
-  - Passkey (WebAuthn/FIDO2)
-- **Manual i18n**: Custom internationalization system with translation loaders ([src/lib/i18n](src/lib/i18n)).
-- **Database migrations**: Simple migration scripts ([scripts/db](scripts/db), [sql/migrations](sql/migrations)).
-- **Styled Components**: Ready-to-use UI elements ([src/lib/components](src/lib/components)).
-- **Docker Support**: Containerized development and deployment.
+- **Svelte 5 & SvelteKit**: Leverages the latest features of Svelte for building reactive, high-performance web applications.
+- **Fullstack Authentication**: Robust and secure authentication system supporting:
+  - Username & Password
+  - Time-based One-Time Password (TOTP) for 2FA
+  - Passkeys (WebAuthn/FIDO2) for passwordless login
+- **Database**:
+  - **PostgreSQL**: A powerful, open-source object-relational database system.
+  - **Simple Migrations**: Includes scripts to create and apply database migrations.
+- **Styling**:
+  - **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+  - **shadcn-svelte**: A rich, accessible, and customizable component library.
+- **Internationalization (i18n)**: A custom, lightweight i18n setup with JSON-based translation files and a script to check for missing keys.
+- **Docker Support**: Comes with `Dockerfile` and `docker-compose.yaml` for containerized development and deployment with PostgreSQL and Redis.
+- **Tooling**:
+  - **ESLint & Prettier**: For consistent code style and quality.
+  - **Husky**: For running pre-commit hooks (i.e., linting and translation checks).
+  - **CLI**: A command-line interface to bootstrap new projects from this template.
 
 ## Getting Started
 
-### 1. Install dependencies
+### Prerequisites
 
-Install the dependencies with your favourite package manager (mine is bun).
+- [Bun](https://bun.sh/) (or another Node.js package manager like npm/yarn)
+- [Docker](https://www.docker.com/) and Docker Compose
 
-```sh
-bun install
-```
+### Installation
 
-### 2. Configure project
+1.  **Clone the Repository**
+    To create a new project based on this template, you can use the provided CLI tool.
 
-You can use the `init.sh` that will walk you thru configuring the project and automate some tasks
+    ```bash
+    npx sk-template
+    ```
 
-```sh
-./scripts/init.sh
-```
+    This command will guide you through the setup process, cloning the template and configuring project-specific variables.
 
-### 3. Start Postgres and Redis
+2.  **Install Dependencies**
+    Navigate to your new project directory and install the dependencies.
 
-Start the Postgres database and Redis servers.
+    ```bash
+    cd your-project-name
+    bun install
+    ```
 
-```sh
-docker compose up db redis
-```
+3.  **Set Up Environment Variables**
+    The CLI tool creates a `.env` file from `.env.example`. Review it and ensure the values are correct for your local setup.
 
-### 4. Run database migrations
+4.  **Start Services**
+    Start the PostgreSQL and Redis containers using Docker Compose.
 
-Run newly created database migrations against the Postgres database.
+    ```bash
+    docker compose up -d db redis
+    ```
 
-```sh
-bun run db:migrate
-```
+    For local email testing, you can also start MailHog:
 
-### 5. Start development server
+    ```bash
+    docker compose -f docker-compose.dev.yaml up db redis mailhog
+    ```
 
-Start the SvelteKit dev server.
+5.  **Run Database Migrations**
+    Apply the initial database schema and any subsequent migrations.
 
-```sh
-bun run dev
-```
+    ```bash
+    bun run db:migrate
+    ```
 
-## Authentication
+6.  **Run the Development Server**
+    Start the SvelteKit development server.
 
-- **Username/Password**: Standard login and registration.
-- **TOTP**: Two-factor authentication via authenticator apps.
-- **Passkey**: Passwordless login using WebAuthn/FIDO2.
-- **Internationalization** (i18n)
-- **Translations** are loaded manually from JSON files ([`src/lib/i18n/messages`](src/lib/i18n/messages)). Add new languages by extending the config in [`src/lib/i18n/config.ts`](src/lib/i18n/config.ts).
+    ```bash
+    bun run dev
+    ```
 
-## Database Migrations
+    Your application should now be running at `http://localhost:5173`.
 
-### Create a migration
+## Core Concepts
 
-You can create a new Postgres database migration file with the following.
+### Authentication
 
-```sh
-bun run db:create-migration
-```
+The template provides a complete authentication solution out of the box, located in `src/routes/auth`. It handles user registration, login, session management, and password recovery. The server-side logic in `src/lib/server/auth.ts` uses JWT for token-based authentication.
 
-Once ran, a new migration file will be created in [`sql/migrations/`](sql/migrations/) directory.
+### Database Migrations
 
-### Apply migrations:
+You can manage your database schema using simple SQL migration files.
 
-Run newly created database migrations against the Postgres database.
+- **Create a Migration**:
 
-```sh
-bun run db:migrate
-```
+  ```bash
+  bun run db:create-migration
+  ```
 
-## Docker
+  This creates a new timestamped `.sql` file in the `sql/migrations` directory.
 
-The app is packages in a docker image that can be used to deploy it easley.
+- **Apply Migrations**:
+  ```bash
+  bun run db:migrate
+  ```
+  This script executes any new migrations against your database.
 
-### Release
+### Internationalization (i18n)
 
-Build and run the app in Docker:
+The i18n system is configured in `src/lib/i18n`.
 
-```sh
-./scripts/build-image.sh
-```
+- **Translation Files**: Add or edit language files in `src/lib/i18n/messages`.
+- **Configuration**: Register new locales in `src/lib/i18n/config.ts`.
+- **Check Translations**: A pre-commit hook runs `bun run i18n:check` to ensure all translation keys are present across all language files.
 
-### Deploy
+## Deployment with Docker
 
-Deploy the newly created image to a remote server (be sure to set all of the required `SSH_*` env variables for it to work).
+The application is configured for deployment using Docker.
 
-```sh
-./scripts/deploy.sh
-```
+1.  **Build the Docker Image**:
+    The provided `Dockerfile` builds the application and sets up a production-ready Node.js server.
+
+    ```bash
+    docker build -t your-docker-username/your-project-name:latest .
+    ```
+
+2.  **Run the Container**:
+    Use the `docker-compose.yaml` file to run your application along with its database and cache services. Make sure your `.env` file is configured with your production settings.
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    This will start the `web` service (your app), the `db` (PostgreSQL), and `redis` services.

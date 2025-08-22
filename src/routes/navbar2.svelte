@@ -47,12 +47,12 @@
 {#snippet slice()}
   <div class="border-border grow border-x">
     <div
-      class="size-full bg-[image:repeating-linear-gradient(315deg,var(--pattern)0,var(--pattern)1px,transparent_0,transparent_50%)] bg-[size:10px_10px] bg-fixed"
-      style="--pattern: color-mix(in oklab,var(--color-white)10%,transparent);"
+      class="size-full bg-[image:repeating-linear-gradient(315deg,var(--color-border)0,var(--color-border)1px,transparent_0,transparent_50%)] bg-[size:10px_10px] bg-fixed"
     ></div>
   </div>
 {/snippet}
-<div class="h-16"></div>
+
+<div class="h-16 shrink-0"></div>
 
 {#if mobileNavOpen && isMobile.current}
   <div
@@ -75,7 +75,7 @@
 <nav
   class={cn(
     'fixed top-0 right-0 left-0 z-30 flex h-16 w-full transition-all',
-    mobileNavOpen && isMobile.current ? 'p-0' : 'p-2 hover:p-1',
+    mobileNavOpen && isMobile.current ? 'p-0' : 'p-2',
     isMobile.current ? 'duration-500' : 'duration-200'
   )}
 >

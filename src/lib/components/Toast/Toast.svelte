@@ -80,7 +80,7 @@
     <!-- Actions -->
     {#if t.options.actions && t.options.actions.length > 0}
       <div class="flex flex-row gap-2">
-        {#each t.options.actions as action}
+        {#each t.options.actions as action (action.label)}
           {#if action.type === 'link'}
             <Button
               href={action.href}

@@ -1,6 +1,6 @@
 <script lang="ts">
-  // import type { PageProps } from './$types';
   import BgImage from '$lib/assets/authForm/FormImageDark.jpg';
+  // import type { PageProps } from './$types';
 
   // let { data }: PageProps = $props();
 </script>

@@ -8,6 +8,7 @@
   import Button from '$lib/components/ui/button/button.svelte';
   import { t } from '$lib/i18n';
   import { ArrowLeft } from 'lucide-svelte';
+  import { page } from '$app/state';
 
   interface Props {
     reverse?: boolean;
@@ -51,11 +52,8 @@
 {/if}
 
 <div
-  class={cn(
-    'relative flex h-dvh flex-row overflow-hidden',
-    reverse && 'flex-row-reverse',
-    className
-  )}
+  class={cn('relative flex flex-row overflow-hidden', reverse && 'flex-row-reverse', className)}
+  style="height: calc(100dvh - {page.data.navHeight}px);"
   {...restProps}
 >
   {#if back}

@@ -5,8 +5,9 @@
   import { ModeWatcher, toggleMode } from 'mode-watcher';
   import { Button } from '$lib/components/ui/button';
   import { Moon, Sun } from 'lucide-svelte';
-  import Navbar1 from './navbar1.svelte';
+  // import Navbar1 from './navbar1.svelte';
   import Navbar2 from './navbar2.svelte';
+  import { Actions } from '$lib/components/Actions';
 
   let { children } = $props();
 </script>
@@ -16,6 +17,8 @@
 <ModeWatcher />
 
 <Toaster />
+
+<Actions />
 
 <div class="flex min-h-dvh flex-col">
   <!-- <Navbar1 /> -->
