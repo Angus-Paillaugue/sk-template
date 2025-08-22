@@ -1,12 +1,12 @@
 {
   "name": "sk-template",
-  "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "prepublishOnly": "npm run cli:build",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
@@ -14,11 +14,22 @@
     "prepare": "husky",
     "i18n:check": "if command -v bun >/dev/null 2>&1; then bun scripts/checkTranslations.ts; else node scripts/checkTranslations.ts; fi",
     "db:migrate": "if command -v bun >/dev/null 2>&1; then bun scripts/db/migrate.ts; else node scripts/db/migrate.ts; fi",
-    "db:create-migration": "if command -v bun >/dev/null 2>&1; then bun scripts/db/createMigration.ts; else node scripts/db/createMigration.ts; fi"
+    "db:create-migration": "if command -v bun >/dev/null 2>&1; then bun scripts/db/createMigration.ts; else node scripts/db/createMigration.ts; fi",
+    "cli:build": "tsc -p cli/tsconfig.json",
+    "cli:run": "if command -v bun >/dev/null 2>&1; then bun cli/dist/index.js; else node cli/dist/index.js; fi"
   },
   "lint-staged": {
     "*.{js,ts,svelte,json,css,md}": "prettier --write"
   },
+  "bin": {
+    "sk-template": "cli/dist/index.js"
+  },
+  "files": [
+    "cli/dist",
+    "README.md",
+    "package.json",
+    "LICENSE"
+  ],
   "devDependencies": {
     "@eslint/compat": "^1.3.2",
     "@eslint/js": "^9.33.0",
@@ -69,6 +80,7 @@
     "bcryptjs": "^3.0.2",
     "chalk": "^5.6.0",
     "clsx": "^2.1.1",
+    "inquirer": "^12.9.3",
     "jsonwebtoken": "^9.0.2",
     "lucide-svelte": "^0.540.0",
     "mode-watcher": "^1.1.0",

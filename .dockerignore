@@ -13,3 +13,4 @@ eslint.config.js
 tsconfig.json
 build
 pg_data
+cli

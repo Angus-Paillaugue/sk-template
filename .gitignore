@@ -16,3 +16,4 @@ vite.config.ts.timestamp-*
 run
 bun.lock
 pg_data
+cli/dist
