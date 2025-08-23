@@ -6,7 +6,5 @@ export const load: LayoutLoad = async ({ data }) => {
 
   await setLocale(i18n.lang, true);
 
-  data.navHeight = 64;
-
   return data;
 };

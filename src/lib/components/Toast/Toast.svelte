@@ -1,6 +1,6 @@
 <script lang="ts">
   import { cn } from '$lib/utils';
-  import { CircleCheck, CircleX, TriangleAlert, X, Info } from 'lucide-svelte';
+  import { CircleCheck, CircleX, TriangleAlert, X, Info } from '@lucide/svelte';
   import { fade } from 'svelte/transition';
   import { Tween } from 'svelte/motion';
   import { onMount } from 'svelte';

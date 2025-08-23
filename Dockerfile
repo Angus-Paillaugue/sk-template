@@ -1,18 +1,17 @@
-FROM node:23-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 
 COPY ./package.json .
 RUN --mount=type=cache,target=/root/.npm npm install
 
 # Copy the application code
-# TODO: Use a more specific COPY command to avoid copying unnecessary files
 COPY . .
 
 # Build
 RUN npm run build
 
 # Prod server
-FROM node:23-alpine AS prod
+FROM node:24-alpine AS prod
 WORKDIR /app
 COPY --from=build /app/build build/
 COPY --from=build /app/node_modules node_modules/

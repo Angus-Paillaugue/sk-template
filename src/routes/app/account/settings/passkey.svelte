@@ -5,7 +5,7 @@
   import { enhance } from '$app/forms';
   import { t } from '$lib/i18n';
   import { page } from '$app/state';
-  import { ArrowRight } from 'lucide-svelte';
+  import { ArrowRight } from '@lucide/svelte';
   import { Button } from '$lib/components/ui/button';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
 

@@ -11,8 +11,14 @@ fi
 # Run database migrations
 port=${POSTGRES_PORT:-5432}
 host=${POSTGRES_HOST:-db}
+retries=0
 until nc -z "$host" "$port"; do
-  echo "Waiting for database to be ready..."
+  retries=$((retries + 1))
+  echo "Waiting for database to be ready ($retries)..."
+  if [ $retries -ge 30 ]; then
+    echo "Error: Unable to connect to database at $host:$port after 30 attempts."
+    exit 1
+  fi
   sleep 2
 done
 npm run db:migrate

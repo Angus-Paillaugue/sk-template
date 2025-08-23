@@ -1,7 +1,6 @@
 services:
   web:
     build: .
-    image: <DOCKER_USERNAME>/<PROJECT_NAME>:latest
     container_name: web
     restart: unless-stopped
     depends_on:

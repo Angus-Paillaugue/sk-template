@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
   import { cn } from '$lib/utils';
+  import type { SvelteHTMLElements } from 'svelte/elements';
 
-  const { class: className, ...restProps } = $props();
+  const { class: className, ...restProps }: SvelteHTMLElements['svg'] = $props();
 </script>
 
 <svg

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { cn, isMobile } from '$lib/utils';
+  import { cn, isMobile, navHeight } from '$lib/utils';
   import type { SvelteHTMLElements } from 'svelte/elements';
   import FormImageDark from '$lib/assets/authForm/FormImageDark.jpg?enhanced';
   import FormImageLight from '$lib/assets/authForm/FormImageLight.jpg?enhanced';
@@ -7,8 +7,7 @@
   import * as Card from '$lib/components/ui/card';
   import Button from '$lib/components/ui/button/button.svelte';
   import { t } from '$lib/i18n';
-  import { ArrowLeft } from 'lucide-svelte';
-  import { page } from '$app/state';
+  import { ArrowLeft } from '@lucide/svelte';
 
   interface Props {
     reverse?: boolean;
@@ -53,7 +52,7 @@
 
 <div
   class={cn('relative flex flex-row overflow-hidden', reverse && 'flex-row-reverse', className)}
-  style="height: calc(100dvh - {page.data.navHeight}px);"
+  style="height: calc(100dvh - {navHeight}px);"
   {...restProps}
 >
   {#if back}

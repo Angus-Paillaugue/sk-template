@@ -7,7 +7,7 @@
   import FormWrapper from '../formWrapper.svelte';
   import { startAuthentication } from '@simplewebauthn/browser';
   import type { PageProps } from './$types';
-  import { ArrowRight, KeyRound } from 'lucide-svelte';
+  import { ArrowRight, KeyRound } from '@lucide/svelte';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
   import { enhance } from '$app/forms';

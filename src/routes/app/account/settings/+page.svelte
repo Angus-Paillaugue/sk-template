@@ -5,8 +5,15 @@
   import Totp from './totp.svelte';
   import { t } from '$lib/i18n';
   import Password from './password.svelte';
+  import General from './general.svelte';
 
   const entries = [
+    {
+      name: 'General',
+      component: General,
+      title: 'account.settings.tabs.general.title',
+      description: 'account.settings.tabs.general.description',
+    },
     {
       name: 'Password',
       component: Password,

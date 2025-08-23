@@ -4,10 +4,10 @@
   import { t } from '$lib/i18n';
   import { ModeWatcher, toggleMode } from 'mode-watcher';
   import { Button } from '$lib/components/ui/button';
-  import { Moon, Sun } from 'lucide-svelte';
+  import { Moon, Sun } from '@lucide/svelte';
   // import Navbar1 from './navbar1.svelte';
   import Navbar2 from './navbar2.svelte';
-  import { Actions } from '$lib/components/Actions';
+  import { Actions } from '$lib/components';
 
   let { children } = $props();
 </script>
@@ -23,7 +23,8 @@
 <div class="flex min-h-dvh flex-col">
   <!-- <Navbar1 /> -->
   <Navbar2 />
-  {@render children()}
+
+  <svelte:boundary>{@render children()}</svelte:boundary>
 </div>
 
 <div class="bg-card fixed right-2 bottom-2 z-10 rounded-md">

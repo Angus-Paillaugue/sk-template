@@ -5,7 +5,7 @@
   import * as Dialog from '$lib/components/ui/dialog';
   import { t } from '$lib/i18n';
   import { cn, isMobile } from '$lib/utils';
-  import { Menu } from 'lucide-svelte';
+  import { Menu } from '@lucide/svelte';
 
   let mobileNavOpen = $state(false);
 

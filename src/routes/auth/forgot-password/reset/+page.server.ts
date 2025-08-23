@@ -47,7 +47,9 @@ export const actions: Actions = {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
 
-      await UserDAO.resetPassword(email, hash);
+      const user = await UserDAO.getUserByEmail(email);
+
+      await UserDAO.updateUser(user.id, { passwordHash: hash });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       logger.error(msg);

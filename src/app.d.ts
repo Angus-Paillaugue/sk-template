@@ -12,7 +12,6 @@ declare global {
         dir: Dir;
         lang: string;
       };
-      navHeight: number;
     }
     // interface PageData {}
     // interface PageState {}

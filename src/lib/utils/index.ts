@@ -34,6 +34,8 @@ export function copyToClipboard(value: string) {
 
 export const isMobile = new MediaQuery('(max-width: 768px)');
 
+export const navHeight = isMobile.current ? 56 : 64;
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -9,6 +9,51 @@ import { defs } from '$lib/utils/form';
 import z from 'zod';
 
 export const actions: Actions = {
+  updateUsername: async ({ locals, request }) => {
+    const user = locals.user as User;
+
+    try {
+      const formData = Object.fromEntries(await request.formData());
+      const schema = z.object({
+        username: defs.username,
+      });
+      const form = schema.safeParse(formData);
+      if (!form.success) throw new Error(form.error.issues[0].message);
+      const { username } = form.data;
+      const isUsernameTaken = await UserDAO.userExists(username);
+      if (isUsernameTaken && username !== user.username)
+        throw new Error('errors.auth.usernameTaken');
+      await UserDAO.updateUser(user.id, { username });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      logger.error(msg);
+      return fail(400, { action: 'general', error: true, message: msg });
+    }
+
+    return { action: 'general', success: true, message: 'successes.usernameUpdated' };
+  },
+  updateEmail: async ({ locals, request }) => {
+    const user = locals.user as User;
+
+    try {
+      const formData = Object.fromEntries(await request.formData());
+      const schema = z.object({
+        email: defs.email,
+      });
+      const form = schema.safeParse(formData);
+      if (!form.success) throw new Error(form.error.issues[0].message);
+      const { email } = form.data;
+      const isEmailTaken = await UserDAO.isEmailTaken(email);
+      if (isEmailTaken && email !== user.username) throw new Error('errors.auth.usernameTaken');
+      await UserDAO.updateUser(user.id, { email });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      logger.error(msg);
+      return fail(400, { action: 'general', error: true, message: msg });
+    }
+
+    return { action: 'general', success: true, message: 'successes.emailUpdated' };
+  },
   changePassword: async ({ locals, request }) => {
     const user = locals.user as User;
 
@@ -33,7 +78,7 @@ export const actions: Actions = {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
 
-      await UserDAO.resetPassword(user.email, hash);
+      await UserDAO.updateUser(user.id, { passwordHash: hash });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       logger.error(msg);

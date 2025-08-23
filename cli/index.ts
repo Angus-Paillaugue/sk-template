@@ -101,6 +101,7 @@ async function bootstrap({ projectName, websiteName, websiteOrigin }: Questions)
     recursive: true,
     force: true,
   });
+  await rm(path.join(path.join(HERE, answers.projectName), 'docker-compose.dev.yaml'));
 
   await bootstrap(answers);
 

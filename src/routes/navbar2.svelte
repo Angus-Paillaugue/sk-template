@@ -5,10 +5,12 @@
   import { t } from '$lib/i18n';
   import { cn, isMobile } from '$lib/utils';
   import X from '@lucide/svelte/icons/x';
-  import { Menu } from 'lucide-svelte';
+  import { Menu } from '@lucide/svelte';
+  import { onMount } from 'svelte';
   import { scale, slide } from 'svelte/transition';
 
   let mobileNavOpen = $state(false);
+  let scrollYPos = $state(0);
 
   interface Link {
     href: string;
@@ -34,6 +36,18 @@
   afterNavigate(() => {
     mobileNavOpen = false;
   });
+
+  onMount(() => {
+    const handleScroll = () => {
+      scrollYPos = window.scrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  });
 </script>
 
 {#snippet button(link: Link, className: string = '')}
@@ -52,11 +66,11 @@
   </div>
 {/snippet}
 
-<div class="h-16 shrink-0"></div>
+<div class="h-14 shrink-0 lg:h-16"></div>
 
 {#if mobileNavOpen && isMobile.current}
   <div
-    class="bg-card/80 fixed top-16 right-0 bottom-0 left-0 z-30 backdrop-blur-sm"
+    class="bg-card/80 fixed top-14 right-0 bottom-0 left-0 z-40 backdrop-blur-sm lg:top-16"
     transition:slide={{ axis: 'x', duration: 500 }}
   >
     <div class="flex h-full w-dvw flex-col items-center justify-center">
@@ -74,8 +88,8 @@
 
 <nav
   class={cn(
-    'fixed top-0 right-0 left-0 z-30 flex h-16 w-full transition-all',
-    mobileNavOpen && isMobile.current ? 'p-0' : 'p-2',
+    'fixed top-0 right-0 left-0 z-40 flex h-14 w-full transition-all lg:h-16',
+    (mobileNavOpen && isMobile.current) || scrollYPos === 0 ? 'p-0' : 'p-2',
     isMobile.current ? 'duration-500' : 'duration-200'
   )}
 >

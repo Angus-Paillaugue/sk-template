@@ -1,4 +1,4 @@
-export { default as actions } from './Actions';
+export { default as Actions } from './Actions';
 export { default as Flag } from './Flag';
 export { default as SEO } from './SEO';
 export { default as Toaster } from './Toast';

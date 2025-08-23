@@ -1,33 +1,41 @@
 <script lang="ts">
   import { fly, slide } from 'svelte/transition';
-  import actions from '.';
-  import { backOut } from 'svelte/easing';
-  import { flip } from 'svelte/animate';
-  import { navigating, page } from '$app/state';
+  import { backInOut } from 'svelte/easing';
+  // import { flip } from 'svelte/animate';
+  import { getPageActions } from '$lib/utils/actions.svelte';
+  import { cn } from '$lib/utils';
 
-  $effect(() => {
-    if (navigating.to && navigating.to.url.pathname !== page.url.pathname) {
-      actions.set([]);
-    }
-  });
+  let actions = $derived(getPageActions());
 </script>
 
-{#if $actions.length > 0}
+{#if actions.length > 0}
   <div
-    class="fixed bottom-4 left-1/2 z-40 -translate-x-1/2"
-    transition:fly={{ y: '100%', duration: 500, easing: backOut }}
+    class="fixed bottom-4 left-1/2 z-40 w-max max-w-dvw -translate-x-1/2"
+    transition:fly={{ y: '100%', duration: 500, easing: backInOut }}
   >
-    <div class="bg-card flex flex-row items-center rounded-xl p-1.5">
-      <span class="text-muted-foreground mx-2 font-mono text-sm uppercase">actions</span>
-      {#each $actions as action (action.text)}
-        <button
-          onclick={action.onclick}
+    <div class="bg-card flex w-fit flex-row flex-wrap items-center rounded-xl p-1.5">
+      <span class="text-muted-foreground mx-2 hidden font-mono text-sm uppercase lg:block"
+        >actions</span
+      >
+      {#each actions as action, i (action.text)}
+        {@const tagName = action.href ? 'a' : 'button'}
+        <!--
           animate:flip={{
             duration: 500,
-            easing: backOut,
+            easing: backInOut,
           }}
+        -->
+        <svelte:element
+          this={tagName}
+          role="button"
+          href={action.href}
+          tabindex="0"
+          onclick={action.onclick}
           transition:slide={{ duration: 300, axis: 'x' }}
-          class="bg-muted hover:bg-ring/30 border-border ml-1.5 flex flex-row items-center gap-2 rounded-lg border p-1 px-2 transition-all"
+          class={cn(
+            'bg-muted hover:bg-ring/30 border-border flex flex-row items-center gap-2 rounded-lg border p-1 px-2 transition-all',
+            i !== 0 && 'ml-1.5'
+          )}
         >
           <span class="whitespace-nowrap">
             {action.text}
@@ -37,7 +45,7 @@
               <action.icon class="size-3" />
             </div>
           {/if}
-        </button>
+        </svelte:element>
       {/each}
     </div>
   </div>

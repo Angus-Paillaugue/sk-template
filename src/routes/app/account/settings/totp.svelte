@@ -1,7 +1,7 @@
 <script lang="ts">
   import QRCode from 'qrcode';
   import { Spinner } from '$lib/components';
-  import { ArrowRight, CheckCheck, Eye, EyeClosed } from 'lucide-svelte';
+  import { ArrowRight, CheckCheck, Eye, EyeClosed } from '@lucide/svelte';
   import { fade, slide } from 'svelte/transition';
   import { page } from '$app/state';
   import type { User } from '$lib/types';
@@ -89,7 +89,10 @@
       <p>{$t('auth.totp.settings.manage.secondStep.description')}</p>
       <InputOTP name="totp" class={{ container: 'mx-auto w-fit' }} />
       <Dialog.Footer>
-        <Button type="button" onclick={() => (unlinkTOTPSecondStepModalOpen = false)}
+        <Button
+          type="button"
+          variant="secondary"
+          onclick={() => (unlinkTOTPSecondStepModalOpen = false)}
           >{$t('auth.totp.settings.manage.secondStep.cancel')}</Button
         >
         <Button loading={isSettingUpTOTP} type="submit">
@@ -204,7 +207,7 @@
       >
         <InputOTP name="totp" class={{ container: 'mx-auto w-fit' }} />
         <Dialog.Footer>
-          <Button type="button" onclick={() => (setUpTOTPModalOpen = false)}
+          <Button type="button" variant="secondary" onclick={() => (setUpTOTPModalOpen = false)}
             >{$t('auth.totp.settings.success.buttons.close')}</Button
           >
           <Button type="submit" loading={isSettingUpTOTP}>

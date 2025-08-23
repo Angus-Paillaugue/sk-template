@@ -6,7 +6,7 @@ const loggerLevels = ['error', 'warn', 'debug'] as const;
 type LoggerLevel = (typeof loggerLevels)[number];
 type Logger = { [K in LoggerLevel]: (...args: unknown[]) => void };
 
-const createLogger = (prefix: string | null, color: string | null): Logger => {
+export const createLogger = (prefix: string | null, color: string | null): Logger => {
   const defaultColors: Record<LoggerLevel, string> = {
     error: '#dc2626',
     warn: '#ca8a04',

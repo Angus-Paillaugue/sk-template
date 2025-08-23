@@ -57,6 +57,11 @@
     "server": {
       "connectionRefused": "Connection refused. Please try again later.",
       "forbidden": "Forbidden"
+    },
+    "account": {
+      "settings": {
+        "cannotChangeUsername": "Cannot change username."
+      }
     }
   },
   "successes": {
@@ -65,7 +70,9 @@
     "setUpTOTP": "TOTP has been set up successfully.",
     "unlinkTOTP": "TOTP has been unlinked successfully.",
     "resetPasswordRequest": "Go check your inbox to reset your password!",
-    "resetPassword": "Your password has been reset successfully!"
+    "resetPassword": "Your password has been reset successfully!",
+    "usernameUpdated": "Username updated successfully.",
+    "emailUpdated": "Email updated successfully."
   },
   "auth": {
     "username": "Username",
@@ -162,6 +169,26 @@
   "account": {
     "settings": {
       "tabs": {
+        "general": {
+          "title": "General",
+          "description": "Update your general account settings.",
+          "changeUsername": {
+            "title": "Change username",
+            "alerts": {
+              "taken": {
+                "title": "Username taken",
+                "description": "The username {{username}} is already taken."
+              },
+              "available": {
+                "title": "Username available",
+                "description": "The username {{username}} is available!"
+              }
+            }
+          },
+          "changeEmail": {
+            "title": "Change email"
+          }
+        },
         "password": {
           "title": "Password",
           "description": "Change your password to keep your account secure."

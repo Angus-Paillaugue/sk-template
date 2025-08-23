@@ -90,6 +90,17 @@ export class UserDAO {
     return user;
   }
 
+  static async getUserByEmail(email: User['email']): Promise<User> {
+    const userResult = await pool.query<UserTable>('SELECT * FROM users WHERE email = $1', [email]);
+    if (userResult.rows.length === 0) {
+      throw new Error('errors.auth.userNotFound');
+    }
+    return UserDAO.convertToUser(
+      userResult.rows[0],
+      await PasskeyDAO.getUserPasskey(userResult.rows[0].id)
+    );
+  }
+
   static async credentialsExists(username: User['username'], email: User['email']) {
     const result = await pool.query<{ username: string; email: string }>(
       'SELECT username, email FROM users WHERE username = $1 OR email = $2',
@@ -133,7 +144,41 @@ export class UserDAO {
     return id;
   }
 
-  static async resetPassword(email: User['email'], hash: string) {
-    await pool.query('UPDATE users SET password_hash = $1 WHERE email = $2', [hash, email]);
+  static async updateUser(
+    id: User['id'],
+    updates: Partial<{
+      username: User['username'];
+      passwordHash: User['passwordHash'];
+      email: User['email'];
+    }>
+  ): Promise<void> {
+    const fields = Object.keys(updates);
+    if (fields.length === 0) return;
+    const fieldsMap = {
+      username: 'username',
+      passwordHash: 'password_hash',
+      email: 'email',
+    };
+    const mappedFields = fields.map((field) => {
+      if (!(field in fieldsMap)) {
+        throw new Error(`Invalid field: ${field}`);
+      }
+      return fieldsMap[field as keyof typeof fieldsMap];
+    });
+
+    const values = Object.values(updates);
+    const setString = mappedFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+    const result = await pool.query(
+      `UPDATE users SET ${setString} WHERE id = $${fields.length + 1}`,
+      [...values, id]
+    );
+    if (result.rowCount === 0) {
+      throw new Error('errors.auth.updateUser');
+    }
+    await Redis.del(`user:${id}`);
+    if (updates.username) {
+      await Redis.del(`user:${updates.username}`);
+      await Redis.del(`userExists:${updates.username}`);
+    }
   }
 }
