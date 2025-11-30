@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres
+    container_name: db
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - ORIGIN=http://localhost:5173
+    volumes:
+      - ./pg_data:/var/lib/postgresql:Z
+      - ./sql/init.dev.sql:/docker-entrypoint-initdb.d/init.sql:Z
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - redis-data:/data
+
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
+volumes:
+  redis-data:
