@@ -2,7 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { validateAuthorizationCode, getUserInfo, type OAuthConfig } from '$lib/server/oauth';
 import { UserDAO } from '$lib/server/db/user';
 import { generateAccessToken } from '$lib/server/auth';
-import { Redis } from '$lib/server/db/caching';
+import { Caching } from '$lib/server/db/caching';
 import { logger } from '$lib/utils/logger';
 import type { PageServerLoad } from './$types';
 
@@ -23,7 +23,7 @@ export const load = (async ({ url, cookies }) => {
 
   try {
     // Get the stored OAuth config
-    const oauthConfig = await Redis.get<OAuthConfig>(`oauth:config:${state}`);
+    const oauthConfig = await Caching.get<OAuthConfig>(`oauth:config:${state}`);
     if (!oauthConfig) {
       throw new Error('OAuth configuration not found');
     }

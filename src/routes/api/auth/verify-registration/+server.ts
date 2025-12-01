@@ -3,7 +3,7 @@ import { verifyRegistrationResponse } from '@simplewebauthn/server';
 import type { RequestHandler } from './$types';
 import { UserDAO } from '$lib/server/db/user';
 import { rpID, origin } from '$lib/server/db/passkey';
-import { Redis } from '$lib/server/db/caching';
+import { Caching } from '$lib/server/db/caching';
 import { PasskeyDAO } from '$lib/server/db/passkey';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
     return json({ error: 'errors.auth.userNotFound' }, { status: 404 });
   }
 
-  const currentChallenge = await Redis.get<string>(`registrationChallenge:${user.id}`);
+  const currentChallenge = await Caching.get<string>(`registrationChallenge:${user.id}`);
   if (!currentChallenge) {
     return json({ error: 'errors.auth.challengeExpired' }, { status: 400 });
   }
@@ -32,8 +32,8 @@ export const POST: RequestHandler = async ({ request }) => {
       user.id,
       verification.registrationInfo.credential
     );
-    await Redis.del(`registrationChallenge:${user.id}`);
-    await Redis.del(`user:${user.id}`);
+    await Caching.del(`registrationChallenge:${user.id}`);
+    await Caching.del(`user:${user.id}`);
     return json({ verified: true, passkey });
   }
 

@@ -39,7 +39,7 @@
   ];
 </script>
 
-<div class="mx-auto flex w-full max-w-[1000px] flex-col gap-4">
+<div class="mx-auto flex w-full max-w-[1000px] flex-col gap-4 py-2 lg:py-8">
   {#if page.data.user.oauthProvider}
     <Card.Root>
       <Card.Header>

@@ -4,11 +4,12 @@
   // import { flip } from 'svelte/animate';
   import { getPageActions } from '$lib/utils/actions.svelte';
   import { cn } from '$lib/utils';
+  import Globals from '$lib/globals.svelte';
 
   let actions = $derived(getPageActions());
 </script>
 
-{#if actions.length > 0}
+{#if actions.length > 0 && Globals.flags?.appActionButtons}
   <div
     class="fixed bottom-4 left-1/2 z-40 w-max max-w-dvw -translate-x-1/2"
     transition:fly={{ y: '100%', duration: 500, easing: backInOut }}

@@ -1,6 +1,6 @@
 import * as arctic from 'arctic';
 import { createOAuthClient, type OAuthConfig } from './client';
-import { Redis } from '../db/caching';
+import { Caching } from '../db/caching';
 import { logger } from '$lib/utils/logger';
 
 export async function generateAuthorizationURL(config: OAuthConfig) {
@@ -23,13 +23,13 @@ export async function generateAuthorizationURL(config: OAuthConfig) {
         scopes
       );
       // Store code verifier for later use
-      await Redis.set(`oauth:codeVerifier:${state}`, codeVerifier, { ttl: 10 * 60 }); // 10 minutes
+      await Caching.set(`oauth:codeVerifier:${state}`, codeVerifier, { ttl: 10 * 60 }); // 10 minutes
     } else {
       url = client.createAuthorizationURL(config.authorizationEndpoint, state, scopes);
     }
 
     // Store state for validation
-    await Redis.set(`oauth:state:${state}`, config.tokenEndpoint, { ttl: 10 * 60 }); // 10 minutes
+    await Caching.set(`oauth:state:${state}`, config.tokenEndpoint, { ttl: 10 * 60 }); // 10 minutes
 
     return { url, state };
   } catch (error) {
@@ -43,7 +43,7 @@ export async function validateAuthorizationCode(code: string, state: string, con
     const client = createOAuthClient();
 
     // Verify state
-    const storedTokenEndpoint = await Redis.get<string>(`oauth:state:${state}`);
+    const storedTokenEndpoint = await Caching.get<string>(`oauth:state:${state}`);
     if (!storedTokenEndpoint) {
       throw new Error('Invalid or expired state');
     }
@@ -55,18 +55,18 @@ export async function validateAuthorizationCode(code: string, state: string, con
     let tokens: arctic.OAuth2Tokens;
 
     if (config.usePKCE) {
-      const codeVerifier = await Redis.get<string>(`oauth:codeVerifier:${state}`);
+      const codeVerifier = await Caching.get<string>(`oauth:codeVerifier:${state}`);
       if (!codeVerifier) {
         throw new Error('Code verifier not found');
       }
       tokens = await client.validateAuthorizationCode(config.tokenEndpoint, code, codeVerifier);
-      await Redis.del(`oauth:codeVerifier:${state}`);
+      await Caching.del(`oauth:codeVerifier:${state}`);
     } else {
       tokens = await client.validateAuthorizationCode(config.tokenEndpoint, code, null);
     }
 
     // Clean up state
-    await Redis.del(`oauth:state:${state}`);
+    await Caching.del(`oauth:state:${state}`);
 
     return tokens;
   } catch (error) {

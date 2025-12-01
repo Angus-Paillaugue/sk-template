@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { verifyAuthenticationResponse } from '@simplewebauthn/server';
 import type { RequestHandler } from './$types';
-import { Redis } from '$lib/server/db/caching';
+import { Caching } from '$lib/server/db/caching';
 import { PasskeyDAO } from '$lib/server/db/passkey';
 import { rpID, origin } from '$lib/server/db/passkey';
 import { generateAccessToken } from '$lib/server/auth';
@@ -9,7 +9,7 @@ import { generateAccessToken } from '$lib/server/auth';
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { authResp, UUID } = await request.json();
 
-  const storedChallenge = await Redis.get<string>(`authenticationChallenge:${UUID}`);
+  const storedChallenge = await Caching.get<string>(`authenticationChallenge:${UUID}`);
   if (!storedChallenge) {
     return json({ error: 'errors.auth.challengeExpired' }, { status: 400 });
   }
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
   if (verification.verified) {
     const credentialId = authResp.id;
     const user = await PasskeyDAO.getUserByCredentialID(credentialId);
-    await Redis.del(`authenticationChallenge:${UUID}`);
+    await Caching.del(`authenticationChallenge:${UUID}`);
     if (!user) {
       return json({ verified: false, error: 'errors.auth.noPasskey' }, { status: 400 });
     }

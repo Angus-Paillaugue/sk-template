@@ -5,8 +5,12 @@ import { urlStartsWith } from '$lib/utils/';
 import { auth } from '$lib/server/auth';
 import { logger } from '$lib/utils/logger';
 import { isRoleAbove } from '$lib/roles';
+import { env } from '$env/dynamic/private';
+import { flags } from '$lib/flags';
+import { FlagDAO } from '$lib/server/db/flag';
+import config from '$conf';
 
-const NEED_AUTH_ROUTES: string[] = ['/app'];
+const NEED_AUTH_ROUTES: string[] = ['/app', '/api/sse'];
 
 const authHandler: Handle = async ({ event, resolve }) => {
   const { url, cookies, locals } = event;
@@ -40,7 +44,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
 
   if (
     locals.user &&
-    urlStartsWith(url.pathname, '/app/admin') &&
+    urlStartsWith(url.pathname, ['/app/admin', '/api/admin']) &&
     !isRoleAbove(locals.user.role, 'admin')
   ) {
     // If is trying to access any admin routes without an account or role
@@ -56,7 +60,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
   return response;
 };
 
-export const i18nHandler: Handle = async ({ event, resolve }) => {
+const i18nHandler: Handle = async ({ event, resolve }) => {
   const { request, cookies } = event;
 
   let locale = cookies.get('locale');
@@ -82,4 +86,36 @@ export const i18nHandler: Handle = async ({ event, resolve }) => {
   });
 };
 
-export const handle = sequence(authHandler, i18nHandler);
+const flagHandler: Handle = async ({ event, resolve }) => {
+  if (config?.experimental?.flags) {
+    const flagDecisions: Record<string, boolean> = {};
+
+    for (const flag of flags.getAllFlags()) {
+      if (!event.cookies.get('flag_id')) {
+        event.cookies.set('flag_id', crypto.randomUUID(), {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: env.NODE_ENV === 'production',
+          maxAge: 60 * 60 * 24 * 365,
+        });
+      }
+      const entity = event.cookies.get('flag_id')!;
+      if (flag.decide) {
+        const overrideFlag = await FlagDAO.getFlag(flag.key);
+        let decision: boolean;
+        if (overrideFlag) {
+          decision = overrideFlag.override_value;
+        } else {
+          decision = await flag.decide(entity);
+        }
+        flagDecisions[flag.key] = decision;
+      }
+    }
+    event.locals.flags = flagDecisions;
+  }
+
+  return resolve(event);
+};
+
+export const handle = sequence(authHandler, flagHandler, i18nHandler);

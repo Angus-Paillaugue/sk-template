@@ -18,7 +18,9 @@
     "db:make-admin": "bun scripts/db/makeAdmin.ts",
     "cli:build": "tsc -p cli/tsconfig.json",
     "cli:run": "bun cli/dist/index.js",
-    "cli": "bun cli/index.ts"
+    "cli": "bun cli/index.ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "lint-staged": {
     "*.{js,ts,svelte,json,css,md}": "prettier --write"
@@ -79,7 +81,9 @@
     "bcryptjs": "^3.0.2",
     "chalk": "^5.6.0",
     "clsx": "^2.1.1",
+    "flags": "^4.0.2",
     "inquirer": "^12.9.3",
+    "jsdom": "^27.2.0",
     "jsonwebtoken": "^9.0.2",
     "mode-watcher": "^1.1.0",
     "nodemailer": "^7.0.5",
@@ -88,6 +92,7 @@
     "redis": "^5.8.2",
     "speakeasy": "^2.0.0",
     "tailwind-merge": "^3.3.1",
+    "vitest": "^4.0.14",
     "zod": "^4.0.17"
   }
 }
