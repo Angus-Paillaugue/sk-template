@@ -111,7 +111,12 @@ async function removeFiles(projectName: string, paths: string[]) {
     stdio: 'inherit',
   });
 
-  await removeFiles(answers.projectName, ['.git/', 'cli/', 'docker-compose.dev.yaml', 'sql/init.dev.sql']);
+  await removeFiles(answers.projectName, [
+    '.git/',
+    'cli/',
+    'docker-compose.dev.yaml',
+    'sql/init.dev.sql',
+  ]);
 
   await bootstrap(answers);
 

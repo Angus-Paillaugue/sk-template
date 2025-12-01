@@ -36,11 +36,11 @@
 >
   <div class="space-y-2">
     <Label for="email">{i18n.t('auth.password')}</Label>
-    <Input name="password" type="password" />
+    <Inputw name="password" type="password" />
   </div>
   <div class="space-y-2">
     <Label for="email">{i18n.t('auth.confirmPassword')}</Label>
-    <Input name="confirmPassword" type="password" />
+    <Inputw name="confirmPassword" type="password" />
   </div>
   <Button type="submit" {loading}>{i18n.t('auth.resetPassword.button')}</Button>
 </form>

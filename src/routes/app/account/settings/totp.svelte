@@ -144,7 +144,11 @@
         {#await generateQR()}
           <Spinner class="mx-auto size-8" />
         {:then url}
-          <img src={url} alt={i18n.t('auth.totp.settings.setup.qrCodeAlt')} class="mx-auto size-64" />
+          <img
+            src={url}
+            alt={i18n.t('auth.totp.settings.setup.qrCodeAlt')}
+            class="mx-auto size-64"
+          />
           <div class="flex flex-col items-center justify-center">
             <p>{i18n.t('auth.totp.settings.setup.unableToScan')}</p>
             <div class="flex h-6 flex-row items-center justify-center">

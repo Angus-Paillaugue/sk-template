@@ -11,7 +11,7 @@ declare global {
       i18n: {
         dir: Dir;
         lang: string;
-      };  
+      };
     }
     // interface PageData {}
     // interface PageState {}

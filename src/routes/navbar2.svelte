@@ -54,7 +54,12 @@
   <div
     class={cn('bg-card border-border flex h-full flex-col items-center justify-center', className)}
   >
-    <Button variant="none" animatedText={i18n.t(link.text)} href={link.href} class="px-6 font-mono" />
+    <Button
+      variant="none"
+      animatedText={i18n.t(link.text)}
+      href={link.href}
+      class="px-6 font-mono"
+    />
   </div>
 {/snippet}
 
@@ -77,7 +82,8 @@
       <div class="border-border flex w-1/2 flex-col items-center border">
         {#each links as link, i (link.href)}
           <div class={cn('bg-card/50 flex w-full flex-col', i !== 0 && 'border-t')}>
-            <Button variant="none" class="w-full" size="lg" href={link.href}>{i18n.t(link.text)}</Button
+            <Button variant="none" class="w-full" size="lg" href={link.href}
+              >{i18n.t(link.text)}</Button
             >
           </div>
         {/each}

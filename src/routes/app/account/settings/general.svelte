@@ -84,7 +84,9 @@
       <Alert.Root variant="success">
         <AlertCircle />
         <Alert.Title
-          >{i18n.t('account.settings.tabs.general.changeUsername.alerts.available.title')}</Alert.Title
+          >{i18n.t(
+            'account.settings.tabs.general.changeUsername.alerts.available.title'
+          )}</Alert.Title
         >
         <Alert.Description>
           <p>

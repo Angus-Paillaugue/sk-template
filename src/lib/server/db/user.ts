@@ -11,6 +11,7 @@ export interface UserTable {
   created_at: Date;
   totp_secret: string;
   role: Role;
+  oauth_provider: string | null;
 }
 export class UserDAO {
   static convertToUser(row: UserTable, passkey: Passkey | null = null): User {
@@ -22,24 +23,35 @@ export class UserDAO {
       createdAt: row.created_at,
       passkey: passkey,
       totpSecret: row.totp_secret,
-      role: row.role
+      role: row.role,
+      oauthProvider: row.oauth_provider,
     };
   }
 
   static async createUser(
     username: User['username'],
     email: User['email'],
-    passwordHash: string
+    passwordHash: string,
+    {
+      oauthProvider = null,
+      role = 'user',
+    }: { oauthProvider?: User['oauthProvider']; role?: User['role'] } = {}
   ): Promise<User> {
     if (await UserDAO.userExists(username)) {
       throw new Error('errors.auth.usernameTaken');
     }
     const result = await pool.query(
-      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING *',
-      [username, email, passwordHash]
+      'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING *',
+      [username, email, passwordHash, role]
     );
     if (result.rows.length === 0) {
       throw new Error('errors.auth.createUser');
+    }
+    if (oauthProvider) {
+      await pool.query('UPDATE users SET oauth_provider = $1 WHERE id = $2', [
+        oauthProvider,
+        result.rows[0].id,
+      ]);
     }
     return UserDAO.convertToUser(result.rows[0]);
   }
@@ -182,5 +194,13 @@ export class UserDAO {
       await Redis.del(`user:${updates.username}`);
       await Redis.del(`userExists:${updates.username}`);
     }
+  }
+
+  static async updateUserRole(id: User['id'], role: Role): Promise<void> {
+    const result = await pool.query('UPDATE users SET role = $1 WHERE id = $2', [role, id]);
+    if (result.rowCount === 0) {
+      throw new Error('errors.auth.updateUser');
+    }
+    await Redis.del(`user:${id}`);
   }
 }

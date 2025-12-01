@@ -100,58 +100,57 @@
 </Dialog.Root>
 
 <FormWrapper>
-  <div class="flex w-full flex-col space-y-8">
-    <form
-      action="?/logIn"
-      method="POST"
-      use:enhance={(e) => {
-        loading = true;
-        formData = e.formData;
-        return async ({ update }) => {
-          await update({ reset: false });
-          loading = false;
-        };
-      }}
-      class="flex w-full flex-col space-y-8"
-    >
-      <img src="/logo.png" class="size-8 object-contain" alt="" />
-      <h1 class="mb-2 text-2xl font-semibold">{i18n.t('auth.logIn.title')}</h1>
-      <p class="text-muted-foreground text-base">
-        {i18n.t('auth.logIn.dontHaveAnAccount.text')}
-        <a href="/auth/sign-up" class="text-primary font-medium"
-          >{i18n.t('auth.logIn.dontHaveAnAccount.cta')}</a
-        >
-      </p>
-      <div class="space-y-2">
-        <Label for="username">{i18n.t('auth.username')}</Label>
-        <Input name="username" />
-      </div>
-      <div class="space-y-2">
-        <Label>{i18n.t('auth.password')}</Label>
-        <Input name="password" type="password" />
-      </div>
-      <div class="flex flex-row items-center justify-between">
-        <div class="flex flex-row items-center gap-1">
-          <Checkbox id="rememberMe" name="rememberMe" checked />
-          <Label for="rememberMe">{i18n.t('auth.rememberMe')}</Label>
-        </div>
-        <a href="/auth/forgot-password" class="text-primary text-sm font-medium"
-          >{i18n.t('auth.forgotPasswordKeyword')}</a
-        >
-      </div>
-      <Button type="submit" {loading}>{i18n.t('auth.submit')}</Button>
-    </form>
-
-    <div class="flex flex-row items-center gap-2">
-      <div class="border-border w-full border-t"></div>
-      <span class="font-mono text-base font-semibold uppercase">{i18n.t('auth.passkey.separator')}</span
+  <form
+    action="?/logIn"
+    method="POST"
+    use:enhance={(e) => {
+      loading = true;
+      formData = e.formData;
+      return async ({ update }) => {
+        await update({ reset: false });
+        loading = false;
+      };
+    }}
+    class="flex w-full flex-col space-y-8"
+  >
+    <img src="/logo.png" class="size-8 object-contain" alt="" />
+    <h1 class="mb-2 text-2xl font-semibold">{i18n.t('auth.logIn.title')}</h1>
+    <p class="text-muted-foreground text-base">
+      {i18n.t('auth.logIn.dontHaveAnAccount.text')}
+      <a href="/auth/sign-up" class="text-primary font-medium"
+        >{i18n.t('auth.logIn.dontHaveAnAccount.cta')}</a
       >
-      <div class="border-border w-full border-t"></div>
+    </p>
+    <div class="space-y-2">
+      <Label for="username">{i18n.t('auth.username')}</Label>
+      <Input name="username" />
     </div>
+    <div class="space-y-2">
+      <Label>{i18n.t('auth.password')}</Label>
+      <Input name="password" type="password" />
+    </div>
+    <div class="flex flex-row items-center justify-between">
+      <div class="flex flex-row items-center gap-1">
+        <Checkbox id="rememberMe" name="rememberMe" checked />
+        <Label for="rememberMe">{i18n.t('auth.rememberMe')}</Label>
+      </div>
+      <a href="/auth/forgot-password" class="text-primary text-sm font-medium"
+        >{i18n.t('auth.forgotPasswordKeyword')}</a
+      >
+    </div>
+    <Button type="submit" {loading}>{i18n.t('auth.submit')}</Button>
+  </form>
 
-    <Button onclick={loginWithPasskey} class="gap-2" loading={passkeyLoading}>
-      <KeyRound class="size-4" />
-      {i18n.t('auth.passkey.button')}
-    </Button>
+  <div class="flex flex-row items-center gap-2">
+    <div class="border-border w-full border-t"></div>
+    <span class="font-mono text-base font-semibold uppercase"
+      >{i18n.t('auth.passkey.separator')}</span
+    >
+    <div class="border-border w-full border-t"></div>
   </div>
+
+  <Button onclick={loginWithPasskey} class="gap-2" loading={passkeyLoading}>
+    <KeyRound class="size-4" />
+    {i18n.t('auth.passkey.button')}
+  </Button>
 </FormWrapper>

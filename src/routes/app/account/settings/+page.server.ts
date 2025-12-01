@@ -11,6 +11,13 @@ import z from 'zod';
 export const actions: Actions = {
   updateUsername: async ({ locals, request }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
 
     try {
       const formData = Object.fromEntries(await request.formData());
@@ -34,6 +41,13 @@ export const actions: Actions = {
   },
   updateEmail: async ({ locals, request }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
 
     try {
       const formData = Object.fromEntries(await request.formData());
@@ -56,6 +70,13 @@ export const actions: Actions = {
   },
   changePassword: async ({ locals, request }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
 
     try {
       const formData = Object.fromEntries(await request.formData());
@@ -89,6 +110,13 @@ export const actions: Actions = {
   },
   deletePasskey: async ({ locals }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
 
     try {
       await PasskeyDAO.deletePasskey(user.id);
@@ -105,6 +133,13 @@ export const actions: Actions = {
   },
   unlinkTOTP: async ({ locals, request }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
     const formData = Object.fromEntries(await request.formData());
     const { totp } = formData as {
       totp: string;
@@ -126,6 +161,13 @@ export const actions: Actions = {
   },
   setUpTOTP: async ({ locals, request }) => {
     const user = locals.user as User;
+    if (user.oauthProvider) {
+      return fail(400, {
+        action: 'general',
+        error: true,
+        message: 'errors.auth.oauthSettingsChange',
+      });
+    }
     const formData = Object.fromEntries(await request.formData());
     const { totp, TOTPsecret } = formData as {
       totp: string;

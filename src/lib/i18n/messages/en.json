@@ -82,6 +82,9 @@
     "rememberMe": "Remember me",
     "forgotPasswordKeyword": "Forgot password?",
     "submit": "Submit",
+    "oauth": {
+      "button": "Sign in with {{name}}"
+    },
     "signIn": {
       "title": "Sign in to your account",
       "alreadyHaveAnAccount": {
@@ -168,6 +171,10 @@
   },
   "account": {
     "settings": {
+      "oauth": {
+        "title": "Account settings locked",
+        "description": "You cannot change most of your settings because your account is bound to <b>{{provider}}</b> OAuth provider."
+      },
       "tabs": {
         "general": {
           "title": "General",

@@ -4,7 +4,7 @@ import { logger } from '$lib/utils/logger';
 
 export class Redis {
   private static client: ReturnType<typeof createClient> | null = null;
-  private static enabled = false;
+  private static enabled = true;
 
   static async getClient() {
     if (!this.client) {

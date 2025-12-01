@@ -1,7 +1,7 @@
 import type { AuthenticatorTransportFuture, CredentialDeviceType } from '@simplewebauthn/browser';
 
 export const roles = ['user', 'admin'] as const; // Keep the roles in order of power (used by `isRoleBelow` in `./roles/index.ts`)
-export type Role = typeof roles[number];
+export type Role = (typeof roles)[number];
 
 export type UUID = string;
 export interface User {
@@ -13,6 +13,7 @@ export interface User {
   totpSecret?: string;
   passkey: Passkey | null;
   role: Role;
+  oauthProvider: string | null;
 }
 
 export interface Passkey {
