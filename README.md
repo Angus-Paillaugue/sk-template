@@ -9,6 +9,7 @@ This is a modern Svelte 5 template featuring Tailwind CSS, PostgreSQL, and robus
   - Username & Password
   - Time-based One-Time Password (TOTP) for 2FA
   - Passkeys (WebAuthn/FIDO2) for passwordless login
+  - OICD support (experimental)
 - **Database**:
   - **PostgreSQL**: A powerful, open-source object-relational database system.
   - **Simple Migrations**: Includes scripts to create and apply database migrations.

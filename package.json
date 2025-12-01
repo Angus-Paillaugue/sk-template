@@ -17,7 +17,8 @@
     "db:create-migration": "bun scripts/db/createMigration.ts",
     "db:make-admin": "bun scripts/db/makeAdmin.ts",
     "cli:build": "tsc -p cli/tsconfig.json",
-    "cli:run": "bun cli/dist/index.js"
+    "cli:run": "bun cli/dist/index.js",
+    "cli": "bun cli/index.ts"
   },
   "lint-staged": {
     "*.{js,ts,svelte,json,css,md}": "prettier --write"
