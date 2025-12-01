@@ -1,28 +1,3 @@
-# Svelte 5 Template — Fullstack Auth & I18n
-
-This is a modern Svelte 5 template featuring Tailwind CSS, PostgreSQL, and robust authentication (username/password, TOTP, passkey). It includes a manual i18n implementation, database migration tooling, and a comprehensive set of pre-styled UI components based on shadcn-svelte.
-
-## Features
-
-- **Svelte 5 & SvelteKit**: Leverages the latest features of Svelte for building reactive, high-performance web applications.
-- **Fullstack Authentication**: Robust and secure authentication system supporting:
-  - Username & Password
-  - Time-based One-Time Password (TOTP) for 2FA
-  - Passkeys (WebAuthn/FIDO2) for passwordless login
-  - OICD support (experimental)
-- **Database**:
-  - **PostgreSQL**: A powerful, open-source object-relational database system.
-  - **Simple Migrations**: Includes scripts to create and apply database migrations.
-- **Styling**:
-  - **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
-  - **shadcn-svelte**: A rich, accessible, and customizable component library.
-- **Internationalization (i18n)**: A custom, lightweight i18n setup with JSON-based translation files and a script to check for missing keys.
-- **Docker Support**: Comes with `Dockerfile` and `docker-compose.yaml` for containerized development and deployment with PostgreSQL and Redis.
-- **Tooling**:
-  - **ESLint & Prettier**: For consistent code style and quality.
-  - **Husky**: For running pre-commit hooks (i.e., linting and translation checks).
-  - **CLI**: A command-line interface to bootstrap new projects from this template.
-
 ## Quick Start
 
 ### Prerequisites
