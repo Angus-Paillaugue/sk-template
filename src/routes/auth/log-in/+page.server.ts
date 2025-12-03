@@ -8,6 +8,7 @@ import { validateTOTP } from '$lib/server/totp';
 import { defs } from '$lib/utils/form';
 import z from 'zod';
 import { env } from '$env/dynamic/private';
+import i18n from '$lib/i18n';
 
 export const actions: Actions = {
   logIn: async ({ request, cookies }) => {
@@ -31,6 +32,15 @@ export const actions: Actions = {
           action: 'logIn',
           error: true,
           mustUsePasskey: true,
+        });
+      }
+
+      // If is bound to an OAuth account, cannot log in with password
+      if (user.oauthProvider) {
+        return fail(400, {
+          action: 'logIn',
+          error: true,
+          message: i18n.t('errors.auth.useOauth', { provider: user.oauthProvider }),
         });
       }
 

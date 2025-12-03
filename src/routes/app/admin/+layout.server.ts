@@ -14,10 +14,10 @@ export const load = (async ({ locals, url }) => {
     redirect(303, '/app');
   }
   const f = await FlagDAO.getAllFlags();
-  // Remove _decide function before sending to client
+  // Remove decide function before sending to client
   const flags = f.map((flag) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _decide, ...rest } = flag;
+    const { decide, ...rest } = flag;
     return rest;
   });
 

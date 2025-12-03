@@ -9,7 +9,7 @@
   let actions = $derived(getPageActions());
 </script>
 
-{#if actions.length > 0 && Globals.flags?.appActionButtons}
+{#if actions.length > 0 && Globals.flags.getFlag('appActionButtons')}
   <div
     class="fixed bottom-4 left-1/2 z-40 w-max max-w-dvw -translate-x-1/2"
     transition:fly={{ y: '100%', duration: 500, easing: backInOut }}

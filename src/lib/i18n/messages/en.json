@@ -39,6 +39,8 @@
       "passkeyLoginFailed": "Passkey login failed. Please try again.",
       "passwordTooShort": "Password must be at least 8 characters long.",
       "passwordTooLong": "Password must be at most 100 characters long.",
+      "useOauth": "Please use {{provider}} to log in to this account.",
+      "botDetected": "Bot detected.",
       "totp": {
         "invalidToken": "Invalid TOTP token.",
         "registerFailed": "Failed to register TOTP. Please try again.",
@@ -72,7 +74,12 @@
     "resetPasswordRequest": "Go check your inbox to reset your password!",
     "resetPassword": "Your password has been reset successfully!",
     "usernameUpdated": "Username updated successfully.",
-    "emailUpdated": "Email updated successfully."
+    "emailUpdated": "Email updated successfully.",
+    "admin": {
+      "createFlag": "Feature flag created successfully.",
+      "deleteFlag": "Feature flag deleted successfully.",
+      "editFlag": "Feature flag updated successfully."
+    }
   },
   "auth": {
     "username": "Username",
@@ -223,6 +230,38 @@
       }
     }
   },
+  "admin": {
+    "flags": {
+      "create": {
+        "title": "Create Flag",
+        "description": "Create a new flag to manage feature rollouts and experiments.",
+        "button": "Create Flag",
+        "input": {
+          "key": "Flag Key",
+          "description": "Flag Description",
+          "exampleDescription": "E.g., 'Enable new dashboard for selected users'",
+          "chance": "Rollout Chance (%)"
+        }
+      },
+      "delete": {
+        "title": "Delete Flag",
+        "description": "Are you sure you want to delete this flag? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      },
+      "edit": {
+        "title": "Edit Flag",
+        "description": "Edit the details of the feature flag.",
+        "button": "Save Changes",
+        "input": {
+          "key": "Flag Key",
+          "description": "Flag Description",
+          "exampleDescription": "E.g., 'Enable new dashboard for selected users'",
+          "chance": "Rollout Chance (%)"
+        }
+      }
+    }
+  },
   "nav": {
     "home": "Home",
     "about": "About",
@@ -232,5 +271,44 @@
     "settings": "Settings",
     "logIn": "Login",
     "signUp": "Sign Up"
+  },
+  "cookies": {
+    "title": "Did someone say cookies !",
+    "descriptionWithCookies": "Just to inform you that we do use non essential cookies.",
+    "descriptionWithoutCookies": "Just to inform you that we <b>DO NOT USE</b> any unessential cookies.",
+    "cta": {
+      "learnMore": "Learn more",
+      "learnLess": "Learn less",
+      "acceptAll": "Accept all",
+      "thatsAlright": "That's alright",
+      "savePreferences": "Save preferences",
+      "moreOptions": "More options"
+    },
+    "moreInfo": {
+      "table": {
+        "name": "Name",
+        "purpose": "Purpose",
+        "accepted": "Accepted"
+      },
+      "requiredAsterisk": "* Required functional cookies",
+      "cookies": {
+        "token": {
+          "name": "Authentication Token",
+          "purpose": "Used to keep you logged in and secure your account."
+        },
+        "locale": {
+          "name": "Language Preference",
+          "purpose": "Stores your language preference for a better experience."
+        },
+        "flag_id": {
+          "name": "Feature Flag Identifier",
+          "purpose": "Helps us manage experimental features for your account."
+        },
+        "cookie_consent": {
+          "name": "Cookie Consent",
+          "purpose": "Remembers your cookie preferences."
+        }
+      }
+    }
   }
 }

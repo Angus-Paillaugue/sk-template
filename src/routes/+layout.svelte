@@ -9,16 +9,18 @@
   import { onMount } from 'svelte';
   import { SSEClient } from '$lib/utils/sse';
   import Globals from '$lib/globals.svelte';
+  import CookieModal from '$lib/Cookie/CookieModal.svelte';
 
   let { children, data } = $props();
-  Globals.flags = data.flags || {};
+  Globals.flags.setFlags(data.flags || {});
 
+  // Global SSE subscription to flag updates
   onMount(() => {
     const sse = SSEClient.subscribe<{ flagKey: string; value: boolean | null }>(
       'flags:update',
       (d) => {
         const { flagKey, value } = d;
-        Globals.flags[flagKey] = value;
+        Globals.flags.setOverride(flagKey, value);
       }
     );
 
@@ -35,6 +37,8 @@
 <Toaster />
 
 <Actions />
+
+<CookieModal />
 
 <div class="flex min-h-dvh flex-col">
   <!-- <Navbar1 /> -->
