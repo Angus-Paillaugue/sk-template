@@ -5,7 +5,7 @@ import type {
   WebAuthnCredential,
 } from '@simplewebauthn/browser';
 import pool from '.';
-import { Redis } from './caching';
+import { Caching } from './caching';
 import { UserDAO } from './user';
 import { getEnv } from '../utils';
 import config from '$conf';
@@ -41,7 +41,7 @@ export class PasskeyDAO {
   }
 
   static async getUserPasskey(userId: User['id']): Promise<Passkey | null> {
-    // const cachedPasskey = await Redis.get<Passkey[]>(`user:${userId}:passkey`);
+    // const cachedPasskey = await Caching.get<Passkey[]>(`user:${userId}:passkey`);
     // if (cachedPasskey) return cachedPasskey;
 
     const result = await pool.query<PasskeyTable>('SELECT * FROM passkey WHERE user_id = $1', [
@@ -51,7 +51,7 @@ export class PasskeyDAO {
       return null;
     }
     const passkey = PasskeyDAO.convertToPasskey(result.rows[0]);
-    await Redis.set(`user:${userId}:passkey`, passkey);
+    await Caching.set(`user:${userId}:passkey`, passkey);
     return passkey;
   }
 
@@ -90,8 +90,8 @@ export class PasskeyDAO {
     }
 
     const passkey = PasskeyDAO.convertToPasskey(result.rows[0]);
-    await Redis.del(`user:${userId}:passkey`); // Invalidate cache
-    await Redis.del(`user:${userId}`); // Invalidate cache
+    await Caching.del(`user:${userId}:passkey`); // Invalidate cache
+    await Caching.del(`user:${userId}`); // Invalidate cache
     return passkey;
   }
 
@@ -110,8 +110,8 @@ export class PasskeyDAO {
     if (result.rowCount === 0) {
       throw new Error('errors.auth.deletePasskey');
     }
-    await Redis.del(`user:${userId}:passkey`); // Invalidate cache
-    await Redis.del(`user:${userId}`); // Invalidate cache
+    await Caching.del(`user:${userId}:passkey`); // Invalidate cache
+    await Caching.del(`user:${userId}`); // Invalidate cache
   }
 
   static async getUserByCredentialID(credentialID: Passkey['id']): Promise<User | null> {

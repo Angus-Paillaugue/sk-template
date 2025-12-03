@@ -16,11 +16,16 @@ export const actions: Actions = {
         username: defs.username,
         password: defs.password,
         rememberMe: defs.checkbox,
+        website: z.string().max(0).optional(), // honeypot field
       });
       const form = schema.safeParse(formData);
       if (!form.success) throw new Error(form.error.issues[0].message);
 
-      const { username, email, password, rememberMe } = form.data;
+      const { username, email, password, rememberMe, website } = form.data;
+      if (website) {
+        // Honeypot field filled, likely a bot
+        throw new Error('errors.auth.botDetected');
+      }
       await UserDAO.credentialsExists(username, email);
       // Hash password
       const salt = await bcrypt.genSalt(10);

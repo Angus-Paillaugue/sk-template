@@ -19,7 +19,10 @@ export async function loadTranslationMaps() {
   return translationMaps;
 }
 
-export function flattenTranslations(translations: Record<string, string>, prefix = ''): Record<string, string> {
+export function flattenTranslations(
+  translations: Record<string, string>,
+  prefix = ''
+): Record<string, string> {
   return Object.entries(translations).reduce((acc: Record<string, string>, [key, value]) => {
     if (typeof value === 'object' && value !== null) {
       return {
@@ -30,7 +33,7 @@ export function flattenTranslations(translations: Record<string, string>, prefix
     acc[`${prefix}${key}`] = value;
     return acc;
   }, {});
-};
+}
 
 async function checkTranslations() {
   const hasErrors: { type: string; file: string; message: string }[] = [];

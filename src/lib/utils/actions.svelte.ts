@@ -2,7 +2,7 @@ import { page } from '$app/state';
 import { Settings, Shield, User as UserIcon } from '@lucide/svelte';
 import { createLogger } from './logger';
 import { isRoleAbove } from '$lib/roles';
-import type { User } from '$lib/types'
+import type { User } from '$lib/types';
 
 type Route = string | string[];
 
@@ -66,9 +66,16 @@ const isActionApplicable = (action: Action, user: User, path: string): boolean =
 
   if (Array.isArray(route)) {
     // any explicit negation (including wildcard negations) for the current path should block the action
-    if (route.some((r) => r.startsWith('!') && matchesPattern(r, path))) return false;
+    if (
+      route.some(
+        (r) => r.startsWith('!') && matchesPattern(r, path) && (action?.if ? action.if(user) : true)
+      )
+    )
+      return false;
     // otherwise the action is applicable if any non-negated entry matches (including wildcard matches)
-    return route.some((r) => !r.startsWith('!') && matchesPattern(r, path));
+    return route.some(
+      (r) => !r.startsWith('!') && matchesPattern(r, path) && (action?.if ? action.if(user) : true)
+    );
   }
 
   return matchesPattern(route, path) && (action?.if ? action.if(user) : true);

@@ -2,7 +2,7 @@
 import path from 'node:path';
 import { input } from '@inquirer/prompts';
 import { execSync } from 'node:child_process';
-import { readFile, rename, writeFile, rm } from 'node:fs/promises';
+import { readFile, rename, writeFile, rm, exists } from 'node:fs/promises';
 
 type Replacement = { from: RegExp | string; to: string };
 interface Questions {
@@ -101,23 +101,69 @@ async function removeFiles(projectName: string, paths: string[]) {
   }
 }
 
-(async () => {
+async function updateProject(targetDir: string) {
+  // Add upstream remote if not exists
+  const gitDir = path.join(targetDir, '.git');
+  if (!(await exists(gitDir))) {
+    console.error('Error: Target directory is not a git repository.');
+    process.exit(1);
+  }
+  try {
+    execSync('git remote get-url upstream', { cwd: targetDir, stdio: 'ignore' });
+  } catch {
+    execSync('git remote add upstream https://github.com/Angus-Paillaugue/sk-template', {
+      cwd: targetDir,
+    });
+  }
+  // Fetch and merge upstream main
+  try {
+    execSync('git fetch upstream', { cwd: targetDir, stdio: 'inherit' });
+    execSync('git switch main', { cwd: targetDir, stdio: 'inherit' });
+    execSync('git merge upstream/main', { cwd: targetDir, stdio: 'inherit' });
+  } catch (error) {
+    console.error('Error during update:', error);
+    process.exit(1);
+  }
+  console.log('\n✅ Project updated successfully!');
+}
+
+async function main() {
   console.log('🚀 Welcome to sk-template!');
 
-  const answers = await askQuestions();
+  const args = process.argv.slice(2);
+  const command = args[0] || 'create';
 
-  // Clone the project
-  execSync(`git clone https://github.com/Angus-Paillaugue/sk-template ${answers.projectName}`, {
-    stdio: 'inherit',
-  });
+  if (command === 'update') {
+    // Prompt for project directory
+    const targetDir = args[1] || (await input({ message: 'Path to your project?', default: HERE }));
+    await updateProject(targetDir);
+  } else {
+    // Default: create
+    const answers = await askQuestions();
 
-  await removeFiles(answers.projectName, ['.git/', 'cli/', 'docker-compose.dev.yaml', 'sql/init.dev.sql']);
+    // Clone the project
+    execSync(
+      `git clone --depth 1 https://github.com/Angus-Paillaugue/sk-template ${answers.projectName}`,
+      {
+        stdio: 'inherit',
+      }
+    );
 
-  await bootstrap(answers);
+    await removeFiles(answers.projectName, [
+      '.git/',
+      'cli/',
+      'docker-compose.dev.yaml',
+      'sql/init.dev.sql',
+    ]);
 
-  console.log(`\n✅ Project ${answers.projectName} created!`);
-  console.log(`\nNext steps:\n`);
-  console.log(`  cd ${answers.projectName}`);
-  console.log(`  bun install`);
-  console.log(`  bun run dev`);
-})();
+    await bootstrap(answers);
+
+    console.log(`\n✅ Project ${answers.projectName} created!`);
+    console.log(`\nNext steps:\n`);
+    console.log(`  cd ${answers.projectName}`);
+    console.log(`  bun install`);
+    console.log(`  bun run dev`);
+  }
+}
+
+main();

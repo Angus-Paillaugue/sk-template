@@ -65,7 +65,8 @@
 <AlertDialog.Root bind:open={removePasskeyModalOpen}>
   <AlertDialog.Content>
     <AlertDialog.Header>
-      <AlertDialog.Title>{i18n.t('account.settings.tabs.passkey.remove.modal.title')}</AlertDialog.Title
+      <AlertDialog.Title
+        >{i18n.t('account.settings.tabs.passkey.remove.modal.title')}</AlertDialog.Title
       >
       <AlertDialog.Description>
         {i18n.t('account.settings.tabs.passkey.remove.modal.description')}

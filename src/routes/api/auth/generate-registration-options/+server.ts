@@ -2,7 +2,7 @@ import { UserDAO } from '$lib/server/db/user';
 import { generateRegistrationOptions } from '@simplewebauthn/server';
 import type { RequestHandler } from './$types';
 import { rpID, rpName } from '$lib/server/db/passkey';
-import { Redis } from '$lib/server/db/caching';
+import { Caching } from '$lib/server/db/caching';
 import { json } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ url }) => {
     userID: new TextEncoder().encode(user.id),
   });
 
-  await Redis.set(`registrationChallenge:${user.id}`, options.challenge, {
+  await Caching.set(`registrationChallenge:${user.id}`, options.challenge, {
     condition: undefined,
     ttl: 10,
   });

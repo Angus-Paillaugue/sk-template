@@ -57,6 +57,7 @@
       <Label>{i18n.t('auth.password')}</Label>
       <Input name="password" type="password" />
     </div>
+    <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" />
     <div class="flex flex-row items-center justify-between">
       <div class="flex flex-row items-center gap-1">
         <Checkbox id="rememberMe" name="rememberMe" checked />

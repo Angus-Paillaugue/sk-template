@@ -3,5 +3,8 @@
   "project_name": "sk-template",
   "website": {
     "name": "Sveltekit Template"
+  },
+  "experimental": {
+    "flags": true
   }
 }
