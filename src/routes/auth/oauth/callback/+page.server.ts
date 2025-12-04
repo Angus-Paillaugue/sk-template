@@ -37,7 +37,13 @@ export const load = (async ({ url, cookies }) => {
 
     // Extract user details (adjust based on your OIDC provider)
     const email = userInfo.email;
-    const username = userInfo.preferred_username || userInfo.name || email.split('@')[0];
+    let username = userInfo.preferred_username || userInfo.name || email.split('@')[0];
+
+    if (await UserDAO.userExists(username)) {
+      // Append a random suffix to the username to avoid conflicts
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      username = `${username}${randomSuffix}`;
+    }
 
     if (!email) {
       throw new Error('Email not provided by OAuth provider');

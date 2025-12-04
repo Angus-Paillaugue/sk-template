@@ -27,7 +27,7 @@ export const actions: Actions = {
       };
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      logger.error('Error creating user account :', msg);
+      logger.error('Error creating feature flag :', msg);
       return fail(400, {
         action: 'create',
         error: true,

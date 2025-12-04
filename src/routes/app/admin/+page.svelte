@@ -206,7 +206,7 @@
       class="mt-6 flex flex-col gap-4"
       method="POST"
       use:enhance={(e) => {
-        e.formData.append('originalId', formValues.edit.key);
+        e.formData.append('originalId', formValues.edit.originalId);
         loadingStates.edit = true;
         return async ({ update }) => {
           loadingStates.edit = false;
@@ -306,7 +306,6 @@
             </RadioGroup.Root>
           </td>
           <td class="grid grid-cols-1 grid-rows-2 justify-items-end gap-2 p-2">
-            <!-- TODO: Make this work -->
             <Button
               size="icon"
               variant="outline"
