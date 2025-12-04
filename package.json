@@ -90,7 +90,6 @@
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
     "qrcode": "^1.5.4",
-    "redis": "^5.8.2",
     "speakeasy": "^2.0.0",
     "tailwind-merge": "^3.3.1",
     "vitest": "^4.0.15",

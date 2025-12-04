@@ -27,16 +27,21 @@ export const GET: RequestHandler = async ({ url }) => {
         }
       }, 15000);
 
-      subscriber = await PubSub.subscribe(channel, (message) => {
-        if (!isClosed) {
-          try {
-            controller.enqueue(`data: ${message}\n\n`);
-          } catch (e) {
-            isClosed = true;
-            clearInterval(heartbeat);
+      try {
+        subscriber = await PubSub.subscribe(channel, (message) => {
+          if (!isClosed) {
+            try {
+              controller.enqueue(`data: ${message}\n\n`);
+            } catch (e) {
+              isClosed = true;
+              clearInterval(heartbeat);
+            }
           }
-        }
-      });
+        });
+      } catch (e) {
+        clearInterval(heartbeat);
+        controller.error(e);
+      }
     },
     async cancel() {
       isClosed = true;

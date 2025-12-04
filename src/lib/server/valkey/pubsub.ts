@@ -8,8 +8,9 @@ export class PubSub {
   }
 
   static async subscribe(channel: string, callback: (message: string) => void) {
-    const oldValkey = await getValkeyInstance();
-    const valkey = await oldValkey.duplicate();
+    const baseValkey = await getValkeyInstance();
+    const valkey = baseValkey.duplicate();
+    await valkey.connect();
     valkey.subscribe(channel, (err) => {
       if (err) {
         logger.error('Failed to subscribe: %s', err.message);

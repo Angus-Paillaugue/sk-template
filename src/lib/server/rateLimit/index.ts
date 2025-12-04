@@ -7,10 +7,10 @@ export async function rateLimit(
 ) {
   if (dev) return; // Disable rate limiting in development
   const key = `rate-limit:${ip}`;
-  const redis = await getValkeyInstance();
-  const [current] = await redis.multi().incr(key).expire(key, windowS).exec();
-
-  if (current > limit) {
+  const valkey = await getValkeyInstance();
+  const results = await valkey.multi().incr(key).expire(key, windowS).exec();
+  const current = results?.[0]?.[1] as number | undefined;
+  if (current && current > limit) {
     throw new Error('Too many requests, please try again later.');
   }
 }

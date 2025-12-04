@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     depends_on:
       - db
-      - redis
+      - valkey
     env_file:
       - .env
     environment:
@@ -36,4 +36,4 @@ services:
       - valkey-data:/data
 
 volumes:
-  redis-data:
+  valkey-data:
