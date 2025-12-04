@@ -24,7 +24,7 @@
       <p class="mt-1 text-sm">
         {@html COOKIES.hasNonEssentialCookies()
           ? i18n.t('cookies.descriptionWithCookies')
-          : i18n.t('cookies.descriptionWithCookies')}
+          : i18n.t('cookies.descriptionWithoutCookies')}
       </p>
       {#if learnMoreOpen}
         <div

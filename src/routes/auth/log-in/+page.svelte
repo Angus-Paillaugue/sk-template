@@ -14,6 +14,7 @@
   import { Checkbox } from '$lib/components/ui/checkbox';
   import * as Dialog from '$lib/components/ui/dialog';
   import { InputOTP } from '$lib/components/ui/input-otp';
+  import { page } from '$app/state';
 
   let { form }: PageProps = $props();
   let loading = $state(false);
@@ -31,6 +32,11 @@
         logger.error('Log in error:', form.message);
         Toaster.error(form.message);
       }
+    }
+    if (page.params?.error) {
+      const msg = decodeURIComponent(page.params.error);
+      logger.error('Log in error:', msg);
+      Toaster.error(msg);
     }
   });
 

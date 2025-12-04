@@ -58,7 +58,7 @@ export class FlagDAO {
 
   static async getFlag(key: string): Promise<Flag | null> {
     const res = await pool.query<FlagTable>('SELECT * FROM flag WHERE flag_key = $1', [key]);
-    return this.convertToFlag(res.rows[0]) || null;
+    return res.rows.length > 0 ? this.convertToFlag(res.rows[0]) : null;
   }
 
   static async overrideFlag(key: string, overrideValue: boolean): Promise<void> {
