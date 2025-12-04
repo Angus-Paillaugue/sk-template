@@ -33,8 +33,9 @@
         Toaster.error(form.message);
       }
     }
-    if (page.params?.error) {
-      const msg = decodeURIComponent(page.params.error);
+    const urlError = page.url.searchParams.get('error');
+    if (urlError) {
+      const msg = decodeURIComponent(urlError);
       logger.error('Log in error:', msg);
       Toaster.error(msg);
     }

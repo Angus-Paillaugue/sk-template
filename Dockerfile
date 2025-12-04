@@ -24,5 +24,5 @@ COPY --from=build /app/sql sql/
 EXPOSE 4173
 ENV NODE_ENV=production
 ENV POSTGRES_HOST=db
-ENV REDIS_HOST=redis
+ENV VALKEY_HOST=valkey
 CMD [ "sh", "./entrypoint.sh" ]

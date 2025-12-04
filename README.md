@@ -17,7 +17,7 @@ This is a modern Svelte 5 template featuring Tailwind CSS, PostgreSQL, and robus
   - **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
   - **shadcn-svelte**: A rich, accessible, and customizable component library.
 - **Internationalization (i18n)**: A custom, lightweight i18n setup with JSON-based translation files and a script to check for missing keys.
-- **Docker Support**: Comes with `Dockerfile` and `docker-compose.yaml` for containerized development and deployment with PostgreSQL and Redis.
+- **Docker Support**: Comes with `Dockerfile` and `docker-compose.yaml` for containerized development and deployment with PostgreSQL and Valkey.
 - **Tooling**:
   - **ESLint & Prettier**: For consistent code style and quality.
   - **Husky**: For running pre-commit hooks (i.e., linting and translation checks).
@@ -203,7 +203,7 @@ The template supports **4 authentication methods**:
 **How it works:**
 
 1. User registers a passkey (fingerprint, face, hardware key)
-2. Challenge is generated and stored in Redis (10-minute TTL)
+2. Challenge is generated and stored in Valkey (10-minute TTL)
 3. Authenticator signs the challenge
 4. Server verifies the signature
 5. Passkey credential is stored in DB
@@ -281,7 +281,7 @@ Data Access Objects handle all database queries. Examples:
 
 - [`UserDAO`](src/lib/server/db/user.ts): User CRUD operations
 - [`PasskeyDAO`](src/lib/server/db/passkey.ts): Passkey management
-- [`Redis`](src/lib/server/db/caching.ts): Cache operations
+- [`Valkey`](src/lib/server/db/caching.ts): Cache operations
 
 **Usage example:**
 
@@ -505,7 +505,7 @@ Services:
 
 - `web`: SvelteKit app (port 4173)
 - `db`: PostgreSQL (port 5432)
-- `redis`: Redis cache (port 6379)
+- `valkey`: Valkey cache (port 6379)
 
 ### Environment for Production
 
@@ -520,8 +520,8 @@ POSTGRES_HOST=db  # Use service name when in Docker
 POSTGRES_USER=...
 POSTGRES_PASSWORD=...
 
-# Redis
-REDIS_HOST=redis
+# Valkey
+VALKEY_HOST=valkey
 
 # Email
 SMTP_HOST=your-smtp-server
@@ -537,7 +537,7 @@ OAUTH_CLIENT_ID=...
 
 ### Performance Tips
 
-- Redis caching reduces database queries (used for OAuth state, TOTP challenges)
+- Valkey caching reduces database queries (used for OAuth state, TOTP challenges)
 - Database indexing on frequently queried columns (see migrations)
 - HTTP-only cookies prevent XSS attacks
 - JWT tokens are stateless (no session storage needed)
@@ -567,7 +567,7 @@ Run `bun run i18n:check` to see which translations are missing, then add them to
 1. Verify `OAUTH_ENABLED=true` in [.env](.env)
 2. Check OAuth provider credentials are correct
 3. Ensure `ORIGIN` matches OAuth redirect URI
-4. Check Redis is running (`docker logs redis`)
+4. Check Valkey is running (`docker logs valkey`)
 
 ---
 

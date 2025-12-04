@@ -1,7 +1,7 @@
 import { FlagDAO } from '$lib/server/db/flag';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { PubSub } from '$lib/server/redis/pubsub';
+import { PubSub } from '$lib/server/valkey/pubsub';
 
 export const POST: RequestHandler = async ({ request }) => {
   const { flagKey, value } = await request.json();

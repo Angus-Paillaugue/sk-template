@@ -1,40 +1,35 @@
-import redis from '$lib/server/redis';
+import { getValkeyInstance } from '$lib/server/valkey';
 
 export class Caching {
   static async get<T = unknown>(key: string): Promise<T | null> {
-    const value = await redis.get(key);
+    const valkey = await getValkeyInstance();
+    const value = await valkey.get(key);
     return value ? (JSON.parse(value) as T) : null;
   }
 
-  static async set(
-    key: string,
-    value: unknown,
-    { ttl = 3600, condition = 'NX' }: { ttl?: number; condition?: 'NX' | 'XX' } = {}
-  ) {
-    await redis.set(key, JSON.stringify(value), {
-      expiration: {
-        type: 'EX',
-        value: ttl,
-      },
-      condition: condition, // Only set if the key does not already exist
-    });
+  static async set(key: string, value: unknown, { ttl = 3600 }: { ttl?: number } = {}) {
+    const valkey = await getValkeyInstance();
+    await valkey.set(key, JSON.stringify(value), 'EX', ttl);
   }
 
   static async del(key: string) {
-    await redis.del(key);
+    const valkey = await getValkeyInstance();
+    await valkey.del(key);
   }
 
   static async clear(startsWith: string) {
-    const keys = await redis.keys(startsWith + '*');
+    const valkey = await getValkeyInstance();
+    const keys = await valkey.keys(startsWith + '*');
     if (keys.length > 0) {
-      await redis.del(keys);
+      await valkey.del(keys);
     }
   }
 
   static async nuke() {
-    const keys = await redis.keys('*');
+    const valkey = await getValkeyInstance();
+    const keys = await valkey.keys('*');
     if (keys.length > 0) {
-      await redis.del(keys);
+      await valkey.del(keys);
     }
   }
 }
