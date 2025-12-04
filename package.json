@@ -83,6 +83,7 @@
     "clsx": "^2.1.1",
     "flags": "^4.0.2",
     "inquirer": "^12.9.3",
+    "iovalkey": "^0.3.3",
     "jsdom": "^27.2.0",
     "jsonwebtoken": "^9.0.2",
     "mode-watcher": "^1.1.0",

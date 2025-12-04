@@ -12,7 +12,6 @@ export const GET: RequestHandler = async () => {
     userVerification: 'preferred',
   });
   await Caching.set(`authenticationChallenge:${UUID}`, opts.challenge, {
-    condition: undefined,
     ttl: 10,
   });
 

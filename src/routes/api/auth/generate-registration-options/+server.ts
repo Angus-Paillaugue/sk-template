@@ -43,7 +43,6 @@ export const GET: RequestHandler = async ({ url }) => {
   });
 
   await Caching.set(`registrationChallenge:${user.id}`, options.challenge, {
-    condition: undefined,
     ttl: 10,
   });
 

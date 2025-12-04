@@ -13,17 +13,14 @@ services:
       - ./pg_data:/var/lib/postgresql:Z
       - ./sql/init.dev.sql:/docker-entrypoint-initdb.d/init.sql:Z
 
-  redis:
-    container_name: redis
-    image: redis:alpine
+  valkey:
+    container_name: valkey
+    image: valkey/valkey
+    command: valkey-server --save 60 1 --loglevel debug
     ports:
-      - '${REDIS_PORT:-6379}:6379'
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
+      - '${VALKEY_PORT:-6379}:6379'
     volumes:
-      - redis-data:/data
+      - valkey-data:/data
 
   mailhog:
     container_name: mailhog
@@ -33,4 +30,4 @@ services:
       - '8025:8025'
 
 volumes:
-  redis-data:
+  valkey-data:

@@ -1,4 +1,4 @@
-import { PubSub } from '$lib/server/redis/pubsub';
+import { PubSub } from '$lib/server/valkey/pubsub';
 import type { RequestHandler } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
 
@@ -10,28 +10,39 @@ export const GET: RequestHandler = async ({ url }) => {
 
   let subscriber: Awaited<ReturnType<typeof PubSub.subscribe>> | null = null;
   let heartbeat: ReturnType<typeof setInterval>;
+  let isClosed = false;
 
   const stream = new ReadableStream({
     async start(controller) {
       // Heartbeat to keep connection alive
       heartbeat = setInterval(() => {
-        controller.enqueue(':\n\n');
+        if (!isClosed) {
+          try {
+            controller.enqueue(':\n\n');
+          } catch (e) {
+            // Controller is closed, stop heartbeat
+            clearInterval(heartbeat);
+            isClosed = true;
+          }
+        }
       }, 15000);
 
       subscriber = await PubSub.subscribe(channel, (message) => {
-        try {
-          controller.enqueue(`data: ${message}\n\n`);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (e) {
-          // Ignore if controller is closed
+        if (!isClosed) {
+          try {
+            controller.enqueue(`data: ${message}\n\n`);
+          } catch (e) {
+            isClosed = true;
+            clearInterval(heartbeat);
+          }
         }
       });
     },
     async cancel() {
+      isClosed = true;
       clearInterval(heartbeat);
-      if (subscriber && typeof subscriber.unsubscribe === 'function') {
-        await subscriber.unsubscribe();
-      } else if (subscriber && typeof subscriber.quit === 'function') {
+      if (subscriber) {
+        await subscriber.unsubscribe(channel);
         await subscriber.quit();
       }
     },

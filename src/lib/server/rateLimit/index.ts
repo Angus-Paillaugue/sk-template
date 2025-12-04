@@ -1,5 +1,5 @@
 import { dev } from '$app/environment';
-import redis from '$lib/server/redis';
+import { getValkeyInstance } from '$lib/server/valkey';
 
 export async function rateLimit(
   ip: string,
@@ -7,9 +7,9 @@ export async function rateLimit(
 ) {
   if (dev) return; // Disable rate limiting in development
   const key = `rate-limit:${ip}`;
+  const redis = await getValkeyInstance();
   const [current] = await redis.multi().incr(key).expire(key, windowS).exec();
 
-  // @ts-expect-error current is a number
   if (current > limit) {
     throw new Error('Too many requests, please try again later.');
   }
