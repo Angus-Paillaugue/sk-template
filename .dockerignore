@@ -7,7 +7,6 @@ node_modules
 .env
 .env.*
 README.md
-*.lock
 .gitignore
 .npmrc
 .prettierignore
