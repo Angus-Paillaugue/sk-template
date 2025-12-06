@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join } from 'node:path';
 
 export const HERE = import.meta.url.startsWith('file:')
   ? new URL('.', import.meta.url).pathname

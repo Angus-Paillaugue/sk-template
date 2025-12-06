@@ -7,8 +7,8 @@
 
 import pool from './pool.ts';
 import { HERE } from '../shared.ts';
-import { readdir, readFile } from 'fs/promises';
-import { join } from 'path';
+import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 const getLastMigrationDate = async (): Promise<Date> => {
   const { rows } = await pool.query<{ created_at: string }>(

@@ -1,4 +1,23 @@
 services:
+  web:
+    build: .
+    image: angus-pllg/sk-template:latest
+    container_name: web
+    restart: unless-stopped
+    depends_on:
+      - db
+      - valkey
+    env_file:
+      - .env
+    environment:
+      - ORIGIN=http://localhost:4173
+      - POSTGRES_HOST=db
+      - VALKEY_HOST=valkey
+    ports:
+      - '4173:3000'
+    volumes:
+      - ./logs:/app/logs:Z
+
   db:
     image: postgres
     container_name: db
@@ -7,11 +26,14 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    environment:
-      - ORIGIN=http://localhost:5173
     volumes:
       - ./pg_data:/var/lib/postgresql:Z
       - ./sql/init.dev.sql:/docker-entrypoint-initdb.d/init.sql:Z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   valkey:
     container_name: valkey
