@@ -19,8 +19,6 @@ FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 ENV NODE_ENV=production
-ENV POSTGRES_HOST=db
-ENV VALKEY_HOST=valkey
 RUN bun --bun run build
 
 # Prod server

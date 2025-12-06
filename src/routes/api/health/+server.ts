@@ -10,7 +10,7 @@ interface MigrationTable {
 
 async function valkeyCheck() {
   const valkey = await getValkeyInstance();
-  valkey.set('healthcheck', 'ok');
+  await valkey.set('healthcheck', 'ok');
   const valkeyResult = await valkey.get('healthcheck');
   if (valkeyResult !== 'ok') {
     throw new Error('Valkey healthcheck failed');
