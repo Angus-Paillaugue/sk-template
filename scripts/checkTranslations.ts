@@ -1,5 +1,5 @@
-import { join } from 'path';
-import { readdir, readFile } from 'fs/promises';
+import { join } from 'node:path';
+import { readdir, readFile } from 'node:fs/promises';
 import chalk from 'chalk';
 import { TRANSLATIONS_FILES_DIR } from './shared.ts';
 

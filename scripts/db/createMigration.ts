@@ -1,6 +1,6 @@
 import { HERE } from '../shared.ts';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 
 const now = new Date().getTime();
 const migrationsPath = join(HERE, `../sql/migrations`);
