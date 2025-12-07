@@ -1,4 +1,6 @@
-export const availableThemes = ['material', 'vercel', 'sleek-black', 'claude'] as const;
+import Globals from "$lib/globals.svelte";
+
+export const availableThemes = ['sleek-black', 'vercel', 'material', 'claude'] as const;
 export type Theme = (typeof availableThemes)[number];
 export const availableModes = ['light', 'dark', 'system'] as const;
 export type Mode = (typeof availableModes)[number];
@@ -6,9 +8,6 @@ export const effectiveModes = ['light', 'dark'] as const;
 export type EffectiveMode = (typeof effectiveModes)[number];
 
 export class ThemingClass {
-  theme = $state<Theme>(availableThemes[0]);
-  mode = $state<Mode>('system');
-
   getTheme(wantedTheme: string | null | undefined): Theme {
     if (wantedTheme && availableThemes.includes(wantedTheme as Theme)) {
       return wantedTheme as Theme;
@@ -31,15 +30,15 @@ export class ThemingClass {
       if (availableModes.indexOf(mode) === -1) {
         mode = 'system';
       }
-      let effective = mode;
+      let effective: EffectiveMode;
       document.documentElement.setAttribute('data-mode', mode);
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.style.removeProperty('color-scheme');
       if (mode === 'light' || mode === 'dark') {
         document.documentElement.classList.add(mode);
         document.documentElement.style.setProperty('color-scheme', mode);
-      }
-      if (mode === 'system') {
+        effective = mode;
+      }else {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.classList.add(prefersDark ? 'dark' : 'light');
         document.documentElement.style.setProperty('color-scheme', prefersDark ? 'dark' : 'light');
@@ -49,25 +48,36 @@ export class ThemingClass {
     };
     const updatedMode = applyMode(mode);
     applyTheme(theme);
-    fetch('/api/preferences/theming', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ mode: updatedMode, theme }),
-    });
+    (async () => {
+      try {
+        const response = await fetch('/api/preferences/theming', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ mode: updatedMode, theme }),
+        });
+        if (!response.ok) {
+          console.error('Failed to save theme preferences');
+        }
+      } catch (error) {
+        console.error('Error saving theme preferences:', error);
+      }
+    })();
+    return { mode: updatedMode.mode, effectiveMode: updatedMode.effective, theme };
   }
 
   setTheme(theme: Theme, mode?: Mode) {
-    this.theme = theme;
-    mode ??= this.mode;
-    ThemingClass.saveAndApply(mode, theme);
+    mode ??= Globals.theme.mode.mode;
+    const update = ThemingClass.saveAndApply(mode, theme);
+    Globals.theme.theme = update.theme;
   }
 
   setMode(mode: Mode, theme?: Theme) {
-    this.mode = mode;
-    theme ??= this.theme;
-    ThemingClass.saveAndApply(mode, theme);
+    theme ??= Globals.theme.theme;
+    const update = ThemingClass.saveAndApply(mode, theme);
+    Globals.theme.mode.mode = update.mode;
+    Globals.theme.mode.effective = update.effectiveMode;
   }
 }
 

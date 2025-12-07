@@ -5,5 +5,5 @@ export const getEnv = (key: string, defaultValue: string) => {
 };
 
 export const getCookiePrefix = (name?: string) => {
-  return getEnv('COOKIE_PREFIX', 'sk_') + (name ? name : '');
+  return getEnv('COOKIE_PREFIX', 'sk_') + (name ?? '');;
 };

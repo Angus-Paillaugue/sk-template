@@ -10,7 +10,7 @@
     en: 'us',
   };
 
-  const langCode = Object.keys(overrides).includes(lang) ? overrides[lang] : lang;
+  const langCode = $derived(Object.keys(overrides).includes(lang) ? overrides[lang] : lang);
 </script>
 
 {#if langCode}

@@ -16,6 +16,7 @@
 
   // Global SSE subscription to flag updates
   onMount(() => {
+    Globals.theme = data.theme;
     const sse = SSEClient.subscribe<{ flagKey: string; value: boolean | null }>(
       'flags:update',
       (d) => {

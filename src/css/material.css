@@ -78,9 +78,6 @@ html[data-theme='material'].dark {
   --sidebar-border: oklch(0.35 0.01 319.53 / 30%);
   --sidebar-ring: oklch(0.59 0.11 225.82);
   --destructive-foreground: oklch(1 0 0);
-  --font-sans: Roboto, sans-serif;
-  --font-serif: Merriweather, serif;
-  --font-mono: \"Geist Mono\", \"Geist Mono Fallback\", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;
   --radius: 1rem;
   --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
