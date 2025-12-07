@@ -1,4 +1,5 @@
 import type { FlagDecisions } from './server/db/flag';
+import type { EffectiveMode, Mode, Theme } from './theming/index.svelte';
 
 class Flags {
   flags = $state<FlagDecisions>({});
@@ -37,6 +38,14 @@ class Flags {
 }
 class GlobalsClass {
   flags = new Flags();
+
+  theme = $state<{ mode: { mode: Mode; effective: EffectiveMode }; theme: Theme }>({
+    mode: {
+      mode: 'system',
+      effective: 'dark',
+    },
+    theme: 'sleek-black',
+  });
 }
 
 const Globals = new GlobalsClass();

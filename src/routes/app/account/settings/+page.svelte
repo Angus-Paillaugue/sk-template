@@ -7,9 +7,8 @@
   import Password from './password.svelte';
   import General from './general.svelte';
   import { page } from '$app/state';
-  import { toggleMode } from 'mode-watcher';
   import { Button } from '$lib/components/ui/button';
-  import { Moon, Sun } from '@lucide/svelte';
+  import Theme from './theme.svelte';
 
   const entries = [
     {
@@ -51,17 +50,9 @@
         >
       </Card.Header>
       <Card.Content class="grid gap-6">
-        <Button onclick={toggleMode} variant="outline" size="icon">
-          <Sun
-            class="size-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
-          />
-          <Moon
-            class="absolute size-[1.2rem] scale-0 rotate-90 !transition-all dark:scale-100 dark:rotate-0"
-          />
-          <span class="sr-only">Toggle theme</span>
-        </Button>
-
         <Button href="/auth/log-out">Log out</Button>
+
+        <Theme />
       </Card.Content>
     </Card.Root>
   {:else}

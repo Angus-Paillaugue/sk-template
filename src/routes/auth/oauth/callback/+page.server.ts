@@ -5,6 +5,7 @@ import { generateAccessToken } from '$lib/server/auth';
 import { Caching } from '$lib/server/db/caching';
 import { logger } from '$lib/utils/logger';
 import type { PageServerLoad } from './$types';
+import { getCookiePrefix } from '$lib/server/utils';
 
 export const load = (async ({ url, cookies }) => {
   const code = url.searchParams.get('code');
@@ -73,7 +74,7 @@ export const load = (async ({ url, cookies }) => {
     }
 
     // Set session cookie
-    cookies.set('token', generateAccessToken(user.id), {
+    cookies.set(getCookiePrefix('token'), generateAccessToken(user.id), {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',

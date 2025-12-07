@@ -9,6 +9,13 @@ import { env } from '$env/dynamic/private';
 import { FlagDAO, type FlagDecisions } from '$lib/server/db/flag';
 import config from '$conf';
 import { rateLimit } from '$lib/server/rateLimit';
+import Theming, {
+  availableModes,
+  availableThemes,
+  effectiveModes,
+} from '$lib/theming/index.svelte';
+import z from 'zod';
+import { getCookiePrefix } from '$lib/server/utils';
 
 const NEED_AUTH_ROUTES: string[] = ['/app', '/api/sse'];
 
@@ -16,7 +23,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
   const { url, cookies, locals } = event;
 
   const token =
-    cookies.get('token') ||
+    cookies.get(getCookiePrefix('token')) ||
     event.request.headers.get('Authorization')?.replace('Bearer ', '') ||
     null;
 
@@ -27,13 +34,13 @@ const authHandler: Handle = async ({ event, resolve }) => {
       if (user) {
         locals.user = user;
       } else {
-        cookies.delete('token', { path: '/' });
+        cookies.delete(getCookiePrefix('token'), { path: '/' });
         delete locals?.user;
       }
     } catch (error) {
       logger.error('Error verifying token:', error);
       delete locals.user;
-      cookies.delete('token', { path: '/' });
+      cookies.delete(getCookiePrefix('token'), { path: '/' });
     }
   }
 
@@ -63,7 +70,7 @@ const authHandler: Handle = async ({ event, resolve }) => {
 const i18nHandler: Handle = async ({ event, resolve }) => {
   const { request, cookies } = event;
 
-  let locale = cookies.get('locale');
+  let locale = cookies.get(getCookiePrefix('locale'));
 
   if (!locale) {
     // Get user preferred locale
@@ -79,10 +86,7 @@ const i18nHandler: Handle = async ({ event, resolve }) => {
     dir: localeConfig?.dir ?? 'ltr',
   };
 
-  return resolve(event, {
-    transformPageChunk: ({ html }) =>
-      html.replace('%lang%', i18n.locale).replace('%dir%', localeConfig!.dir || 'ltr'),
-  });
+  return resolve(event);
 };
 
 const flagHandler: Handle = async ({ event, resolve }) => {
@@ -91,9 +95,9 @@ const flagHandler: Handle = async ({ event, resolve }) => {
     if (event.locals?.user) {
       entity = event.locals.user.id;
     } else {
-      if (!event.cookies.get('flag_id')) {
+      if (!event.cookies.get(getCookiePrefix('flag_id'))) {
         entity = crypto.randomUUID();
-        event.cookies.set('flag_id', entity, {
+        event.cookies.set(getCookiePrefix('flag_id'), entity, {
           path: '/',
           httpOnly: true,
           sameSite: 'lax',
@@ -101,7 +105,7 @@ const flagHandler: Handle = async ({ event, resolve }) => {
           maxAge: 60 * 60 * 24 * 365,
         });
       } else {
-        entity = event.cookies.get('flag_id')!;
+        entity = event.cookies.get(getCookiePrefix('flag_id'))!;
       }
     }
 
@@ -125,7 +129,7 @@ const rateLimitHandler: Handle = async ({ event, resolve }) => {
   try {
     await rateLimit(ip);
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     throw error(429, 'Too many requests, please try again later.');
   }
 
@@ -133,9 +137,9 @@ const rateLimitHandler: Handle = async ({ event, resolve }) => {
 };
 
 const cookieConsentHandler: Handle = async ({ event, resolve }) => {
-  const consent = event.cookies.get('cookie_consent');
+  const consent = event.cookies.get(getCookiePrefix('cookie_consent'));
   if (!consent || consent === 'pending') {
-    event.cookies.set('cookie_consent', 'pending', {
+    event.cookies.set(getCookiePrefix('cookie_consent'), 'pending', {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',
@@ -149,10 +153,67 @@ const cookieConsentHandler: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
+const themeHandler: Handle = async ({ event, resolve }) => {
+  const themingCookie = event.cookies.get(getCookiePrefix('theming'));
+  const themingCookieStruct = z.object({
+    mode: z.object({
+      mode: z.enum(availableModes),
+      effective: z.enum(effectiveModes),
+    }),
+    theme: z.enum(availableThemes),
+  });
+  let theme = null;
+  let mode = null;
+  if (themingCookie) {
+    try {
+      const parsed = themingCookieStruct.parse(JSON.parse(themingCookie));
+      theme = parsed.theme;
+      mode = parsed.mode;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      // Invalid cookie, ignore
+    }
+  }
+  if (!theme) {
+    theme = availableThemes[0];
+  }
+  if (!mode) {
+    mode = { mode: 'system', effective: 'dark' };
+  }
+  event.locals.theme = {
+    theme: Theming.getTheme(theme),
+    mode: {
+      mode: Theming.getMode(mode.mode),
+      effective: mode.effective,
+    },
+  };
+  return resolve(event);
+};
+
+const replaceHandler: Handle = async ({ event, resolve }) => {
+  const operations = {
+    '%lang%': event.locals.i18n.lang,
+    '%dir%': event.locals.i18n.dir || 'ltr',
+    '%theme%': event.locals.theme.theme,
+    '%mode%': event.locals.theme.mode.effective,
+  };
+  return resolve(event, {
+    transformPageChunk: ({ html }) => {
+      let transformed = html;
+      for (const [key, value] of Object.entries(operations)) {
+        transformed = transformed.replaceAll(key, value);
+      }
+      return transformed;
+    },
+  });
+};
+
 export const handle = sequence(
   authHandler,
   rateLimitHandler,
   cookieConsentHandler,
   flagHandler,
-  i18nHandler
+  themeHandler,
+  i18nHandler,
+  replaceHandler
 );

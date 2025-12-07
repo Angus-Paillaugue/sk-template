@@ -32,6 +32,11 @@ export function copyToClipboard(value: string) {
   }
 }
 
+export function capitalize(str: string) {
+  if (str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export const isMobile = new MediaQuery('(max-width: 768px)');
 
 export const navHeight = isMobile.current ? 56 : 64;

@@ -3,15 +3,19 @@
   import type { SvelteHTMLElements } from 'svelte/elements';
   import FormImageDark from '$lib/assets/authForm/FormImageDark.jpg?enhanced';
   import FormImageLight from '$lib/assets/authForm/FormImageLight.jpg?enhanced';
-  import { mode } from 'mode-watcher';
   import * as Card from '$lib/components/ui/card';
   import Button from '$lib/components/ui/button/button.svelte';
-  import i18n from '$lib/i18n';
-  import { ArrowLeft, LogIn } from '@lucide/svelte';
+  import { ArrowLeft, LogIn, Monitor, Moon, Sun } from '@lucide/svelte';
   import { logger } from '$lib/utils/logger';
   import { Toaster } from '$lib/components/Toast/toast';
   import { page } from '$app/state';
+  import * as Select from "$lib/components/ui/select";
+  import i18n from '$lib/i18n';
+  import Theming, { availableModes, availableThemes, type Mode } from '$lib/theming/index.svelte';
+  import { capitalize } from '$lib/utils';
+  import Globals from '$lib/globals.svelte';
 
+  let currentTheme = $state(page.data.theme);
   interface Props {
     reverse?: boolean;
     back?: string;
@@ -115,7 +119,7 @@
         reverse ? 'slide-in-from-left rounded-r-[60px]' : 'slide-in-from-right rounded-l-[60px]'
       )}
     >
-      {#if mode.current === 'dark'}
+      {#if Globals.theme.mode.effective === 'dark'}
         <enhanced:img
           draggable="false"
           src={FormImageDark}
@@ -132,7 +136,7 @@
       {/if}
     </div>
   {:else}
-    {#if mode.current === 'dark'}
+    {#if Globals.theme.mode.effective === 'dark'}
       <enhanced:img
         draggable="false"
         src={FormImageDark}
