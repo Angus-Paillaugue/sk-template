@@ -201,6 +201,10 @@
           },
           "changeEmail": {
             "title": "Change email"
+          },
+          "theme": {
+            "theme": "Theme",
+            "mode": "Mode"
           }
         },
         "password": {

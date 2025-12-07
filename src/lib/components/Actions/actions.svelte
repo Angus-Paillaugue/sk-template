@@ -14,7 +14,7 @@
     class="fixed bottom-4 left-1/2 z-40 w-max max-w-dvw -translate-x-1/2"
     transition:fly={{ y: '100%', duration: 500, easing: backInOut }}
   >
-    <div class="bg-card flex w-fit flex-row flex-wrap items-center rounded-xl p-1.5">
+    <div class="bg-card shadow-lg flex w-fit flex-row flex-wrap items-center rounded-xl p-1.5">
       <span class="text-muted-foreground mx-2 hidden font-mono text-sm uppercase lg:block"
         >actions</span
       >

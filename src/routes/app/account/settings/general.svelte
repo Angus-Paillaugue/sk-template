@@ -9,6 +9,7 @@
   import i18n from '$lib/i18n';
   import { logger } from '$lib/utils/logger';
   import { AlertCircle, CheckCheck } from '@lucide/svelte';
+  import Theme from './theme.svelte';
 
   let formValues = $state({ username: page.data.user.username, email: page.data.user.email });
   let initialFormValues = $state({ ...formValues });
@@ -147,3 +148,7 @@
     {i18n.t('account.settings.tabs.general.changeEmail.title')}
   </Button>
 </form>
+
+<Theme />
+
+<Button href="/auth/log-out">Log out</Button>

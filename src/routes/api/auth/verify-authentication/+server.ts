@@ -5,6 +5,7 @@ import { Caching } from '$lib/server/db/caching';
 import { PasskeyDAO } from '$lib/server/db/passkey';
 import { rpID, origin } from '$lib/server/db/passkey';
 import { generateAccessToken } from '$lib/server/auth';
+import { getCookiePrefix } from '$lib/server/utils';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
   const { authResp, UUID } = await request.json();
@@ -34,7 +35,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     if (!user) {
       return json({ verified: false, error: 'errors.auth.noPasskey' }, { status: 400 });
     }
-    cookies.set('token', generateAccessToken(user.id), {
+    cookies.set(getCookiePrefix('token'), generateAccessToken(user.id), {
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     });

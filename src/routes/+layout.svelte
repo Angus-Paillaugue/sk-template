@@ -2,7 +2,6 @@
   import '../app.css';
   import { SEO, Toaster } from '$lib/components';
   import i18n from '$lib/i18n';
-  import { ModeWatcher } from 'mode-watcher';
   // import Navbar1 from './navbar1.svelte';
   import Navbar2 from './navbar2.svelte';
   import { Actions } from '$lib/components';
@@ -12,6 +11,7 @@
   import CookieModal from '$lib/Cookie/CookieModal.svelte';
 
   let { children, data } = $props();
+  // svelte-ignore state_referenced_locally
   Globals.flags.setFlags(data.flags || {});
 
   // Global SSE subscription to flag updates
@@ -31,8 +31,6 @@
 </script>
 
 <SEO title={i18n.t('seo.defaults.title')} description={i18n.t('seo.defaults.description')} />
-
-<ModeWatcher />
 
 <Toaster />
 

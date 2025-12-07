@@ -60,7 +60,7 @@ class Cookies {
   }
 
   setCookieConsent(consent: CookieConsent) {
-    fetch('/api/cookieConsent', {
+    fetch('/api/preferences/cookieConsent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

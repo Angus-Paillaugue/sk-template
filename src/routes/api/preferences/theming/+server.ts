@@ -1,12 +1,15 @@
 import { env } from '$env/dynamic/private';
-import type { CookieConsent } from '$lib/Cookie';
+import { getCookiePrefix } from '$lib/server/utils';
+import type { Mode, EffectiveMode, Theme } from '$lib/theming/index.svelte';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
-  const body = await request.json();
-  const consent = body as CookieConsent;
+  const { mode, theme } = (await request.json()) as {
+    mode: { mode: Mode; effective: EffectiveMode };
+    theme: Theme;
+  };
 
-  cookies.set('cookie_consent', JSON.stringify(consent), {
+  cookies.set(getCookiePrefix('theming'), JSON.stringify({ mode, theme }), {
     path: '/',
     httpOnly: true,
     sameSite: 'lax',

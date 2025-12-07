@@ -3,7 +3,6 @@
   import type { SvelteHTMLElements } from 'svelte/elements';
   import FormImageDark from '$lib/assets/authForm/FormImageDark.jpg?enhanced';
   import FormImageLight from '$lib/assets/authForm/FormImageLight.jpg?enhanced';
-  import { mode } from 'mode-watcher';
   import * as Card from '$lib/components/ui/card';
   import Button from '$lib/components/ui/button/button.svelte';
   import i18n from '$lib/i18n';
@@ -11,6 +10,7 @@
   import { logger } from '$lib/utils/logger';
   import { Toaster } from '$lib/components/Toast/toast';
   import { page } from '$app/state';
+  import Theming from '$lib/theming/index.svelte';
 
   interface Props {
     reverse?: boolean;
@@ -115,7 +115,7 @@
         reverse ? 'slide-in-from-left rounded-r-[60px]' : 'slide-in-from-right rounded-l-[60px]'
       )}
     >
-      {#if mode.current === 'dark'}
+      {#if Theming.mode === 'dark'}
         <enhanced:img
           draggable="false"
           src={FormImageDark}
@@ -132,7 +132,7 @@
       {/if}
     </div>
   {:else}
-    {#if mode.current === 'dark'}
+    {#if Theming.mode === 'dark'}
       <enhanced:img
         draggable="false"
         src={FormImageDark}
